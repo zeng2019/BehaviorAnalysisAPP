@@ -14,7 +14,7 @@
     <string name="mregister">注册</string>
     <string name="prompt_telephone">电话号码</string>
     <string name="title_activity_login_after">LoginAfterActivity</string>
-    <string name="title_activity_main">MainActivity</string>
+    <string name="title_activity_main">个人时间管理</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">用户名</string>
@@ -22,7 +22,7 @@
     <string name="beacon_sn_text">设备序号:</string>
     <string name="beacon_id_text">位置编号:</string>
     <string name="nav_header_desc">Navigation header</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">设置</string>
     <string name="title_activity_settings">设置</string>
     <string name="beacon_jingdu">经度:</string>
     <string name="beacon_weidu">纬度:</string>

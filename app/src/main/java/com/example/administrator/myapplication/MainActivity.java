@@ -53,7 +53,7 @@ import io.reactivex.disposables.Disposable;
  * 主要内容 ：主页
  * 创建人   ：
  * 创建时间 ：2018.6
- * 修改时间 ：
+ * 修改时间 ：2019-04
  */
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -96,15 +96,7 @@ public class MainActivity extends BaseActivity
         //初始化
         init();
 
-      //  FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-      //  fab.setOnClickListener(new View.OnClickListener() {
-      //      @Override
-      //      public void onClick(View view) {
-      //          Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-      //                  .setAction("Action", null).show();
-      //      }
-      //  });
-    }
+   }
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -214,7 +206,7 @@ public class MainActivity extends BaseActivity
             //        btn_checkin.setText("记录时间");
              //       Toast.makeText(MainActivity.this,"扫描位置锚点，请稍候!",Toast.LENGTH_SHORT).show();
                     sensoroManager.stopService();
-                    Toast.makeText(MainActivity.this, "位置锚点扫描服务停止！", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "时间信息记录成功！", Toast.LENGTH_SHORT).show();
                 }
             },10000);
             //
@@ -223,7 +215,7 @@ public class MainActivity extends BaseActivity
             //开启位置锚点扫描服务，开始扫描
             try {
                 sensoroManager.startService();
-                Toast.makeText(MainActivity.this,"启动扫描位置服务！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"启动位置锚点扫描服务！",Toast.LENGTH_SHORT).show();
                 //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 //sensoroManager.setForegroundScanPeriod(7000);
             } catch (Exception e) {
@@ -245,21 +237,19 @@ public class MainActivity extends BaseActivity
                 //获得扫描的设备的sn码并通过toast显示
                 final String sn=beacon.getSerialNumber();
                 final String id=beacon.getMajor().toString()+beacon.getMinor().toString();
-                Toast.makeText(MainActivity.this,"发现位置锚点:"+sn,Toast.LENGTH_SHORT).show();
+                final String mes_local = "发现位置锚点:" + sn;
                 /*
-                  写数据
+                  写用户时间记录信息：位置锚点的 sn 和 id，时间等
                  */
-                writeDB(sn,id,true);
+                recordTimeInfo(sn,id,true);
+
                 writeText(sn);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(MainActivity.this,sn, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this,mes_local, Toast.LENGTH_SHORT).show();
                         tv_sn_info.setText(sn);
                         tv_id_info.setText(id);
-                        //
-                        scan_flag=true;
-                       btn_checkin.setText("记录时间");
                         sensoroManager.stopService();
                     }
                 });
@@ -269,7 +259,7 @@ public class MainActivity extends BaseActivity
             public void onGoneBeacon(Beacon beacon) {
                 final String sn=beacon.getSerialNumber();
                 final String id=beacon.getMajor().toString()+beacon.getMinor().toString();
-                writeDB(sn,id,false);
+                recordTimeInfo(sn,id,false);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -293,8 +283,14 @@ public class MainActivity extends BaseActivity
         String key= beacon.getSerialNumber();
         return key;
     }
-    //
-    private void writeDB(String sn,String id,boolean status){
+    /*
+    * 数据库操作
+    * 功能：写用户时间记录信息到数据库，对应的数据表为CheckinInfo
+    * 输入：位置锚点信息（sn，id）
+    * 输出：void
+    *
+    */
+    private void recordTimeInfo(String sn,String id,boolean status){
         //
         DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
         CheckinInfoDao checkinInfoDao =daoSession.getCheckinInfoDao();

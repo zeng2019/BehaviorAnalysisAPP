@@ -85,7 +85,7 @@ public class myApp extends Application {
 
     private void initGreenDao(){
         //greenDao在升级数据库时会删除数据库，从重新建表。在使用时注意。
-        String db="test.db";
+        String db="info.db";
         //
         DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this,db,null);
         //

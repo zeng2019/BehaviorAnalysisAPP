@@ -131,7 +131,7 @@ public class MainActivity extends BaseActivity
             nodeinfo.setPosition("图书馆");
             nodeinfo.setLatitude(34.61);
             nodeinfo.setLongitude(112.42);
-            nodeinfo.setDescription("图书馆锚点位置");
+            nodeinfo.setDescription("图书馆锚点");
             ((myApp) (getApplication())).getDaoSession().insert(nodeinfo);
 
             //工科教学楼
@@ -142,20 +142,28 @@ public class MainActivity extends BaseActivity
             nodeinfo2.setPosition("工科教学楼");
             nodeinfo2.setLatitude(34.61);
             nodeinfo2.setLongitude(112.43);
-            nodeinfo2.setDescription("工科教学楼锚点位置");
+            nodeinfo2.setDescription("工科教学楼锚点");
             ((myApp) (getApplication())).getDaoSession().insert(nodeinfo2);
 
             //宿舍楼
+            nodeInfo nodeinfo3 = new nodeInfo();
+            nodeinfo3.setNodeID("0xCE5CF997"); //Major + minor
+            nodeinfo3.setNodeSN("0117C5976771"); //SN
+            nodeinfo3.setNodeName("00002");
+            nodeinfo3.setPosition("宿舍楼");
+            nodeinfo3.setLatitude(34.61);
+            nodeinfo3.setLongitude(112.43);
+            nodeinfo3.setDescription("宿舍楼锚点");
+            ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
 
             ((myApp) (getApplication())).created_flag = true; //避免重复创建
         }
-/*
+
         List<nodeInfo> nodeList = queryAll();
         for(int i=0; i<nodeList.size(); i++) {
-            nodeList.get(i).getPosition();
-            Log.d("MainActivity","已有位置锚点："+nodeList.get(i).getNodeSN());
+            Log.d("MainActivity","已有位置锚点："+nodeList.get(i).getNodeSN()+": "+ nodeList.get(i).getPosition());
         }
-*/
+
     }
 
 
@@ -185,14 +193,6 @@ public class MainActivity extends BaseActivity
                             @Override
                             // has bugs
                             public void onClick(View view) {
-                              /* if(scan_flag){
-
-                                   startSensoroService(true);
-
-                               }else{
-                                   startSensoroService(false);
-                        //           btn_checkin.setText("记录时间");
-                               } */
                                 startSensoroService(false);
 
                             }
@@ -255,7 +255,7 @@ public class MainActivity extends BaseActivity
                     //        btn_checkin.setText("记录时间");
                     //       Toast.makeText(MainActivity.this,"扫描位置锚点，请稍候!",Toast.LENGTH_SHORT).show();
                     sensoroManager.stopService();
-                    Toast.makeText(MainActivity.this, "时间信息记录成功！", Toast.LENGTH_SHORT).show();
+                  //  Toast.makeText(MainActivity.this, "时间信息记录成功！", Toast.LENGTH_SHORT).show();
                 }
             }, 10000);
             //
@@ -298,14 +298,13 @@ public class MainActivity extends BaseActivity
                 QueryBuilder<nodeInfo> qb =daoSession.queryBuilder(nodeInfo.class);
                 QueryBuilder<nodeInfo> nodeQueryBuilder = qb.where(nodeInfoDao.Properties.nodeSN.eq(sn));
                 List<nodeInfo> nodeList = nodeQueryBuilder.list();
-                if (!nodeList.isEmpty()) {
-                    for(int i=0; i<nodeList.size(); i++) {
+                Log.d("MainActivity","查找到位置锚点信息！");
+
+                for(int i=0; i<nodeList.size(); i++) {
                         nodePos = nodeList.get(i).getPosition();
                         longitude = nodeList.get(i).getLongitude();
                         latitude = nodeList.get(i).getLatitude();
-                        Log.d("MainActivity","查找到位置锚点信息！");
                     }
-                }
 
                 /*
                   写用户时间记录信息：位置锚点的 sn 和 id，时间等
@@ -355,27 +354,6 @@ public class MainActivity extends BaseActivity
         }
         String key = beacon.getSerialNumber();
         return key;
-    }
-
-    /*
-     * 数据库操作
-     * 功能：写用户时间记录信息到数据库，对应的数据表为CheckinInfo
-     * 输入：位置锚点信息（sn，id）
-     * 输出：void
-     *
-     */
-    private void recordTimeInfo(String sn, String id, boolean status) {
-        //
-        //   DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
-        CheckinInfoDao checkinInfoDao = ((myApp) getApplication()).getDaoSession().getCheckinInfoDao();
-        String beacon_sn = sn;
-        long beacon_id = Long.parseLong(id);
-        long time = System.currentTimeMillis();
-        long user_id = 1000;
-        CheckinInfo checkinInfo = new CheckinInfo(null, user_id, beacon_sn, beacon_id, status, time);
-        QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
-        checkinInfoDao.insert(checkinInfo);
-        Log.d("MainActivity", "Insert is successful");
     }
 
     //写一一个通知体
@@ -593,5 +571,26 @@ public class MainActivity extends BaseActivity
         }
 
         return nodeList;
-}
+    }
+
+    /*
+     * 数据库操作
+     * 功能：写用户时间记录信息到数据库，对应的数据表为CheckinInfo
+     * 输入：位置锚点信息（sn，id）
+     * 输出：void
+     *
+     */
+    private void recordTimeInfo(String sn, String id, boolean status) {
+        //
+        //   DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
+        CheckinInfoDao checkinInfoDao = ((myApp) getApplication()).getDaoSession().getCheckinInfoDao();
+        String beacon_sn = sn;
+        long beacon_id = Long.parseLong(id);
+        long time = System.currentTimeMillis();
+        long user_id = 1000;
+        CheckinInfo checkinInfo = new CheckinInfo(null, user_id, beacon_sn, beacon_id, status, time);
+        QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
+        checkinInfoDao.insert(checkinInfo);
+        Log.d("MainActivity", "写入用户时间信息成功！");
+    }
 }

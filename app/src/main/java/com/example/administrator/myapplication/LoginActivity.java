@@ -2,6 +2,7 @@ package com.example.administrator.myapplication;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 
 import android.content.Intent;
@@ -14,6 +15,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,6 +29,7 @@ import android.widget.Toast;
 
 import com.example.administrator.myapplication.BaseAcivity.BaseActivity;
 import com.example.administrator.myapplication.Model.UserInfo;
+import com.example.administrator.myapplication.Model.nodeInfo;
 import com.example.administrator.myapplication.greendao.DaoSession;
 import com.example.administrator.myapplication.greendao.UserInfoDao;
 import com.example.administrator.myapplication.utils.AppManager;
@@ -48,14 +51,6 @@ public class LoginActivity extends BaseActivity {
 
 
     /**
-     * 包含已知用户名和密码的虚拟认证存储。
-     * A dummy authentication store containing known user names and passwords.
-     * TODO: remove after connecting to a real authentication system.
-     */
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "123@123.com:12345", "234@123.com:12345"
-    };
-    /**
      * Keep track of the login task to ensure we can cancel it if requested.
      */
 
@@ -73,6 +68,21 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        //*******************begin****************************************/
+        //先写入一个测试用户信息至数据库，方便测试。APP开发成功后，可删除。
+/*        Log.d("LoginActivity", "in onCreate(): 创建测试用户");
+        //测试用户信息
+            UserInfo userinfo = new UserInfo();
+            userinfo.setEmail("123@123.com");
+            userinfo.setPassword("12345");
+            userinfo.setTelnumber(1234567890);
+            userinfo.setUsername("TestOne");
+            userinfo.setSchool("河南科技大学");
+            ((myApp) (getApplication())).getDaoSession().insert(userinfo);
+//        userInfoDao.insert(userinfo);*/
+        //**************************end **********************************/
+
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
 
@@ -130,8 +140,6 @@ public class LoginActivity extends BaseActivity {
      * 如果存在表单错误（无效电子邮件、丢失字段等），则
      * 出现错误，不进行实际的登录尝试。
      */
-     //待修改 目标不是email登录  可能用到手机登录
-     //
     private void attemptLogin() {
         if (mAuthTask != null) {
             return;
@@ -178,20 +186,21 @@ public class LoginActivity extends BaseActivity {
             //如果输入的格式正确，显示验证等待对话框，并启动验证线程
             showProgress(true);
             //revised by zeng, 20190416,仅仅用于测试
-            if (email.equals("123@123.com") && password.equals("12345"))
+/*            if (email.equals("123@123.com") && password.equals("12345"))
             {
                 showToast("登录成功");
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                Intent in = new Intent(LoginActivity.this, MainActivity.class);
+                in.putExtra("email",email);
+                startActivity(in);
                 finish();
             }
-            else {
-                mAuthTask = new UserLoginTask(email, password); //非测试账号，登录数据库检测，
+            else {*/
+                mAuthTask = new UserLoginTask(email, password); //非测试账号，登录数据库检测
                 mAuthTask.execute((Void) null);
-            }
+//            }
             ////////////////////
         }
     }
-
 
     private boolean isEmailValid(String email) {
 
@@ -269,34 +278,7 @@ public class LoginActivity extends BaseActivity {
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
-              //Json
-           // HashMap<String,String> userInfo = new HashMap<>();
-           // userInfo.put("usnameId",mEmail);
-           // userInfo.put("password",mPassword);
-           // JSONObject jsonObject= new JSONObject(userInfo);
-
-            /*
-             *
-             × 这里实现验证操作
-             × 基本思路：第一次验证从服务器获得token保存
-             × 以后每次启动app，都是用token来登录
-             *
-             */
-            // TODO:网络验证设计
-            //URL
-           // OkGo.<String>post("www.baidu.com")
-            //        .tag(this)
-            //        .upJson(jsonObject)
-            //        .execute(new StringCallback() {
-            //            @Override
-           //             public void onSuccess(Response<String> response) {
-                  //}
-                 //   });
-
-
-            //后台运行线程
-
-            try {
+              try {
                 // Simulate network access.//模拟用户验证耗时
 
                 Thread.sleep(2000);
@@ -315,16 +297,6 @@ public class LoginActivity extends BaseActivity {
                   return false;
             }
 
-            //for (String credential : DUMMY_CREDENTIALS) {//遍历数组验证自定义用户及密码
-            //    String[] pieces = credential.split(":");//分割字符串，将密码个邮箱分离开
-            //    if (pieces[0].equals(mEmail)) {
-            //        // Account exists, return true if the password matches.
-            //        return pieces[1].equals(mPassword);
-            //    }
-          //  }
-
-            // TODO: register the new account here.
-          //  return true;
         }
 
         @Override
@@ -335,7 +307,10 @@ public class LoginActivity extends BaseActivity {
 
             if (success) {
                 showToast("登录成功");
-                startActivity(new Intent(LoginActivity.this, MainActivity.class));
+                Intent in = new Intent(LoginActivity.this, MainActivity.class);
+                in.putExtra("email",mEmail);
+                startActivity(in);
+      //          startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             } else {
                 //密码错误，输入框获得焦点，并提示错误
@@ -374,6 +349,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {

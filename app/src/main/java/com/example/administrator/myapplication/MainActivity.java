@@ -90,12 +90,18 @@ public class MainActivity extends BaseActivity
     private String timeMatchFormat;
     private Context mContext;
     private boolean scan_flag;
+    private String email; //用于保存从login活动中传递过来的登录用户email
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = getApplicationContext();
+
+        Intent in = getIntent();
+        email = in.getStringExtra("email"); //从Intent中取得登录用户的email信息，用于检索userInfo表，获取用户信息
+        Log.d("MainActivity","当前登录用户邮箱："+email);
+
         //初始化
         init();
 
@@ -289,24 +295,20 @@ public class MainActivity extends BaseActivity
                 final String sn = beacon.getSerialNumber();
                 final String id = beacon.getMajor().toString() + beacon.getMinor().toString();
                 final String mes_local = "发现位置锚点:" + sn;
-                final String nodePos = "未知位置！";
-                final double longitude = 0.0;
-                final double latitude = 0.0;
 
                 //查询nodeInfo数据表，找到位置锚点相关信息
 
                 Log.d("MainActivity","查找到位置锚点信息！");
                 nodeInfo node = new nodeInfo();
                 node = queryBySN(sn);
-                nodePos = node.getPosition();
-                longitude = node.getLongitude();
-                latitude = node.getLatitude();
-
                 //写用户时间记录信息：位置锚点的 sn 和 id，时间等
 
                 recordTimeInfo(sn, id, true);
 
                 writeText(sn);
+                final String nodePos = node.getPosition();
+                final String longitude = node.getLongitude().toString();
+                final String latitude = node.getLatitude().toString();
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -314,8 +316,8 @@ public class MainActivity extends BaseActivity
                         tv_sn_info.setText(sn);
                         tv_id_info.setText(id);
                         tv_pos_des.setText(nodePos);
-                     //   tv_longitude.setText(Double.toString(longitude));
-                     //   tv_latitude.setText(Double.toString(latitude));
+                        tv_longitude.setText(longitude);
+                        tv_latitude.setText(latitude);
                         sensoroManager.stopService();
                     }
                 });
@@ -325,7 +327,7 @@ public class MainActivity extends BaseActivity
             public void onGoneBeacon(Beacon beacon) {
                 final String sn = beacon.getSerialNumber();
                 final String id = beacon.getMajor().toString() + beacon.getMinor().toString();
-                recordTimeInfo(sn, id, false);
+            //    recordTimeInfo(sn, id, false);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -556,19 +558,19 @@ public class MainActivity extends BaseActivity
     * */
     public List queryAll()
     {
+        Log.d("MainActivity", "in queryAll():查找所有位置锚点信息！");
         DaoSession daoSession = ((myApp) getApplication()).getDaoSession();
-        String nodePos ="";
-        double longitude = 0.0;
-        double latitude = 0.0;
+//        String nodePos ="";
+//        double longitude = 0.0;
+//        double latitude = 0.0;
         List<nodeInfo> nodeList = daoSession.loadAll(nodeInfo.class);
 
-        for(int i=0;i<nodeList.size();i++)
+/*        for(int i=0;i<nodeList.size();i++)
         {
             nodePos = nodeList.get(i).getPosition();
             longitude = nodeList.get(i).getLongitude();
             latitude = nodeList.get(i).getLatitude();
-            Log.d("MainActivity", "in queryAll():查找所有位置锚点信息！");
-        }
+        }*/
 
         return nodeList;
     }
@@ -609,7 +611,7 @@ public class MainActivity extends BaseActivity
         long time = System.currentTimeMillis();
         long user_id = 1000;
         CheckinInfo checkinInfo = new CheckinInfo(null, user_id, beacon_sn, beacon_id, status, time);
-        QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
+     //   QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
         checkinInfoDao.insert(checkinInfo);
         Log.d("MainActivity", "写入用户时间信息成功！");
     }

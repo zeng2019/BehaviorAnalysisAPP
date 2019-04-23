@@ -2,10 +2,12 @@ package com.example.administrator.myapplication;
 
 import android.app.Application;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.module.AppGlideModule;
+import com.example.administrator.myapplication.Model.UserInfo;
 import com.example.administrator.myapplication.greendao.DaoMaster;
 import com.example.administrator.myapplication.greendao.DaoSession;
 import com.lzy.okgo.OkGo;

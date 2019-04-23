@@ -27,8 +27,10 @@ import okhttp3.OkHttpClient;
 public class myApp extends Application {
 
     private static final String TAG= myApp.class.getSimpleName();
+    //数据库操作全局对象
     SensoroManager sensoroManager;
     private DaoSession daoSession;
+    public boolean created_flag = false; //该标志用于表明 nodeInfo 数据库是否已经被创建，避免第二次运行app时重复创建该数据库
     @Override
     public void onCreate(){
         super.onCreate();
@@ -98,9 +100,7 @@ public class myApp extends Application {
     public DaoSession getDaoSession(){
         return daoSession;
     }
-    /*
-     *
-     */
+
     @GlideModule
     public final class MyappGildeModule extends AppGlideModule{}
 

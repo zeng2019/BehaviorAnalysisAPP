@@ -177,7 +177,7 @@ public class LoginActivity extends BaseActivity {
             // perform the user login attempt.
             //如果输入的格式正确，显示验证等待对话框，并启动验证线程
             showProgress(true);
-            //revised by zeng, 20190416
+            //revised by zeng, 20190416,仅仅用于测试
             if (email.equals("123@123.com") && password.equals("12345"))
             {
                 showToast("登录成功");
@@ -352,6 +352,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
 
+    /***********************revised begin*******************************/
     /*
     * 用于时间显示的线程处理程序
     * revised at 2019-04-21

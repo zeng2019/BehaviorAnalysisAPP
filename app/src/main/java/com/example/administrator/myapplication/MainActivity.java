@@ -32,6 +32,7 @@ import com.example.administrator.myapplication.Model.nodeInfo;
 import com.example.administrator.myapplication.UI.upImage;
 import com.example.administrator.myapplication.greendao.CheckinInfoDao;
 import com.example.administrator.myapplication.greendao.DaoSession;
+import com.example.administrator.myapplication.greendao.nodeInfoDao;
 import com.example.administrator.myapplication.utils.FileUtils;
 import com.sensoro.beacon.kit.Beacon;
 import com.sensoro.beacon.kit.BeaconManagerListener;
@@ -291,24 +292,18 @@ public class MainActivity extends BaseActivity
                 final String nodePos = "未知位置！";
                 final double longitude = 0.0;
                 final double latitude = 0.0;
-                /*
-                * 查询nodeInfo数据表，找到位置锚点相关信息
-                * /
-                DaoSession daoSession =  ((myApp)getApplication()).getDaoSession();
-                QueryBuilder<nodeInfo> qb =daoSession.queryBuilder(nodeInfo.class);
-                QueryBuilder<nodeInfo> nodeQueryBuilder = qb.where(nodeInfoDao.Properties.nodeSN.eq(sn));
-                List<nodeInfo> nodeList = nodeQueryBuilder.list();
+
+                //查询nodeInfo数据表，找到位置锚点相关信息
+
                 Log.d("MainActivity","查找到位置锚点信息！");
+                nodeInfo node = new nodeInfo();
+                node = queryBySN(sn);
+                nodePos = node.getPosition();
+                longitude = node.getLongitude();
+                latitude = node.getLatitude();
 
-                for(int i=0; i<nodeList.size(); i++) {
-                        nodePos = nodeList.get(i).getPosition();
-                        longitude = nodeList.get(i).getLongitude();
-                        latitude = nodeList.get(i).getLatitude();
-                    }
+                //写用户时间记录信息：位置锚点的 sn 和 id，时间等
 
-                /*
-                  写用户时间记录信息：位置锚点的 sn 和 id，时间等
-                 */
                 recordTimeInfo(sn, id, true);
 
                 writeText(sn);
@@ -319,8 +314,8 @@ public class MainActivity extends BaseActivity
                         tv_sn_info.setText(sn);
                         tv_id_info.setText(id);
                         tv_pos_des.setText(nodePos);
-                        tv_longitude.setText(Double.toString(longitude));
-                        tv_latitude.setText(Double.toString(latitude));
+                     //   tv_longitude.setText(Double.toString(longitude));
+                     //   tv_latitude.setText(Double.toString(latitude));
                         sensoroManager.stopService();
                     }
                 });
@@ -552,8 +547,13 @@ public class MainActivity extends BaseActivity
     }
 
     /*
-     * 以下为数据库操作
+     * 数据库操作
      * */
+
+    /*
+    * 功能：查询nodeInfo表，获得所有位置锚点信息
+    * 返回值：位置锚点信息的列表
+    * */
     public List queryAll()
     {
         DaoSession daoSession = ((myApp) getApplication()).getDaoSession();
@@ -574,7 +574,27 @@ public class MainActivity extends BaseActivity
     }
 
     /*
-     * 数据库操作
+    * 功能：查询指定位置锚点信息
+    * 输入：指定位置锚点的 SN
+    * 输出：符合条件的位置锚点对象
+    * */
+    public nodeInfo queryBySN(String sn)
+    {
+        nodeInfo node = new nodeInfo();
+        DaoSession daoSession = ((myApp) getApplication()).getDaoSession();
+        QueryBuilder<nodeInfo> qb = daoSession.queryBuilder(nodeInfo.class);
+        QueryBuilder<nodeInfo> studentQueryBuilder = qb.where(nodeInfoDao.Properties.NodeSN.eq(sn));
+        List<nodeInfo> nodeList = studentQueryBuilder.list(); //查出当前对应的数据
+        if (!nodeList.isEmpty()) {
+            node = nodeList.get(0);
+        }
+        Log.d("MainActivity","in queryBySN(),find node:"+ node.getPosition());
+        return node;
+    }
+
+
+    /*
+     *
      * 功能：写用户时间记录信息到数据库，对应的数据表为CheckinInfo
      * 输入：位置锚点信息（sn，id）
      * 输出：void

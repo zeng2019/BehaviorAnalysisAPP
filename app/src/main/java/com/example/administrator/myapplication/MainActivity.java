@@ -117,10 +117,10 @@ public class MainActivity extends BaseActivity
      */
     private void init() {
         initView(); //界面元素变量定义
-     //   initNodeInfo(); //初始化nodeInfo数据库
+        initNodeInfo(); //初始化nodeInfo数据库
         initCtrl();
         initHander();
-        initUserInfo();
+//        initUserInfo();
     }
 
     /*
@@ -177,11 +177,11 @@ public class MainActivity extends BaseActivity
     private void initCtrl() {
         //测试蓝牙是否打开
         boolean status = isBlueEnable();
-        if (status) {
-            Toast.makeText(MainActivity.this, "蓝牙已打开", Toast.LENGTH_SHORT).show();
+        if (!status) {
+            Toast.makeText(MainActivity.this, "请打开蓝牙信号！", Toast.LENGTH_SHORT).show();
         }
         app = (myApp) getApplication();
-        timeMatchFormat = "yyyy年MM月dd日 HH:mm:ss";
+        timeMatchFormat = "yyyy-MM-dd HH:mm:ss";
         //实例化 sdk
         sensoroManager = app.sensoroManager;
         beacons = new CopyOnWriteArrayList<>();
@@ -254,24 +254,21 @@ public class MainActivity extends BaseActivity
     private void startSensoroService(final boolean enable) {
         sensoroManager.setBeaconManagerListener(beaconManagerListener);
         if (!enable) {
-            //延时操作，计算扫描时长，初始设置为10秒，10秒后扫描功能停止。
+            //延时操作，计算扫描时长，初始设置为30秒，30秒后扫描功能停止。
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    //       scan_flag = true;
-                    //        btn_checkin.setText("记录时间");
-                    Toast.makeText(MainActivity.this,"停止位置锚点扫描服务!",Toast.LENGTH_SHORT).show();
+                    if (! ((myApp)getApplication()).checkinState ) //时间记录失败
+                        Toast.makeText(MainActivity.this,"未能发现位置锚点，时间记录失败，请重试！",Toast.LENGTH_SHORT).show();
                     sensoroManager.stopService();
-                  //  Toast.makeText(MainActivity.this, "时间信息记录成功！", Toast.LENGTH_SHORT).show();
                 }
-            }, 10000);
-            //
-            //  scan_flag = false;
-            //  Toast.makeText(MainActivity.this,"正在扫描记录位置，请稍候!",Toast.LENGTH_SHORT).show();
+            }, 30000);
+
+
             //开启位置锚点扫描服务，开始扫描
             try {
                 sensoroManager.startService();
-                Toast.makeText(MainActivity.this, "启动位置锚点扫描服务！", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "开始扫描位置锚点！", Toast.LENGTH_SHORT).show();
                 //if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 //sensoroManager.setForegroundScanPeriod(7000);
             } catch (Exception e) {
@@ -286,7 +283,7 @@ public class MainActivity extends BaseActivity
      */
     private void initSensoroLister() {
         //
-        Toast.makeText(MainActivity.this, "初始化位置锚点监听器！", Toast.LENGTH_SHORT).show();
+//        Toast.makeText(MainActivity.this, "初始化位置锚点监听器！", Toast.LENGTH_SHORT).show();
         //
         beaconManagerListener = new BeaconManagerListener() {
             @Override
@@ -297,30 +294,36 @@ public class MainActivity extends BaseActivity
                 final String mes_local = "发现位置锚点:" + sn;
 
                 //查询nodeInfo数据表，找到位置锚点相关信息
-
-                Log.d("MainActivity","查找到位置锚点信息！");
-                nodeInfo node = new nodeInfo();
-                node = queryBySN(sn);
-                //写用户（基于email检索）时间记录信息：位置锚点的 sn 和 id，时间等
-                recordTimeInfo(sn, id, true);
+                if (!sn.isEmpty()) {
+                    Log.d("MainActivity", "获取到位置锚点:"+sn);
+                    //写用户（基于email检索）时间记录信息：位置锚点的 sn 和 id，时间等
+                    recordTimeInfo(sn, id, true);
 
 //                writeText(sn);
-                final String nodePos = node.getPosition();
-                final String longitude = node.getLongitude().toString();
-                final String latitude = node.getLatitude().toString();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        Toast.makeText(MainActivity.this, mes_local, Toast.LENGTH_SHORT).show();
-                        tv_sn_info.setText(sn);
-                        tv_id_info.setText(id);
-                        tv_pos_des.setText(nodePos);
-                        tv_longitude.setText(longitude);
-                        tv_latitude.setText(latitude);
-                        sensoroManager.stopService();
-                    }
-                });
-            }
+                    //以下用于在view显示位置信息
+                    nodeInfo node = new nodeInfo();
+                    node = queryBySN(sn);
+                    final String nodePos = node.getPosition();
+                    final String longitude = node.getLongitude().toString();
+                    final String latitude = node.getLatitude().toString();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+//                            Toast.makeText(MainActivity.this, mes_local, Toast.LENGTH_SHORT).show();
+                            tv_sn_info.setText(sn);
+                            tv_id_info.setText(id);
+                            tv_pos_des.setText(nodePos);
+                            tv_longitude.setText(longitude);
+                            tv_latitude.setText(latitude);
+                            sensoroManager.stopService();
+                        }
+                    });
+
+                    ((myApp)getApplication()).checkinState = true; //设置为true，表示已经找到位置锚点。
+                }
+
+                }
+
 
             @Override
             public void onGoneBeacon(Beacon beacon) {
@@ -436,9 +439,9 @@ public class MainActivity extends BaseActivity
      * 否则调用网络通信获取信息
      * 设置一个标志值标识是否识新用户
      */
-    private void initUserInfo() {
-
-    }
+//    private void initUserInfo() {
+//
+//    }
 
 
     private void initHander() {
@@ -518,8 +521,9 @@ public class MainActivity extends BaseActivity
     }
 
     /**
-     * 待修改
-     * 将里面内容的命名规范化,把前面xml和activity中的命名匹配
+     * 功能：处理时间记录界面的左上角导航栏的项目
+     * 输入：无
+     * 输出：各种界面操作响应动作，及活动的调用
      */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -548,7 +552,7 @@ public class MainActivity extends BaseActivity
     }
 
     /*
-     * 数据库操作
+     * ****************** 数据库操作部分 ****************************
      * */
 
     /*
@@ -608,8 +612,15 @@ public class MainActivity extends BaseActivity
         String beacon_sn = sn;
         long beacon_id = Long.parseLong(id);
         long time = System.currentTimeMillis();
-        //根据用户的 email，检索出用户信息
-        CheckinInfo checkinInfo = new CheckinInfo(null, email, beacon_sn, beacon_id, status, time);
+        Date date = new Date(time);
+        SimpleDateFormat stime = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+        Log.d("MainActivity","格式化后的时间："+ stime.format(date));
+
+        //根据SN，查询nodeInfo，获取位置信息
+        nodeInfo node = queryBySN(beacon_sn);
+        String position = node.getPosition();
+
+        CheckinInfo checkinInfo = new CheckinInfo(null, email, beacon_sn, beacon_id, status, position, date);
 //     //   QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
         checkinInfoDao.insert(checkinInfo);
         //将用户的时间信息读取出来，确认写入成功
@@ -617,7 +628,7 @@ public class MainActivity extends BaseActivity
         List<CheckinInfo> checkList = queryCheckInfoByEmail(email);
         if (!checkList.isEmpty()) {
             for (int i=0; i<checkList.size(); i++) {
-                Log.d("MainActivity","in recordTimeInfo(),用户时间记录:"+ "Pos:"+checkList.get(i).getIbeacn_sn()+"Time:"+checkList.get(i).getTime());
+                Log.d("MainActivity","in recordTimeInfo(),用户时间记录:"+ "位置："+checkList.get(i).getPosition()+"，时间："+checkList.get(i).getTime());
             }
         } else
             Log.d("MainActivity","in recordTimeInfo(): 用户没有时间记录信息！");

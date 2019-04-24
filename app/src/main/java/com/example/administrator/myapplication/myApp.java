@@ -28,8 +28,9 @@ public class myApp extends Application {
     //数据库操作全局对象
     SensoroManager sensoroManager;
     private DaoSession daoSession;
-//    private  DaoMaster daoMaster;
+    private  DaoMaster daoMaster; //增加，删除表项时，取消注释。
     public boolean created_flag = false; //该标志用于表明 nodeInfo 数据库是否已经被创建，避免第二次运行app时重复创建该数据库
+    public boolean checkinState = false; //该标志用于表明是否成功记录时间。
     @Override
     public void onCreate(){
         super.onCreate();
@@ -123,5 +124,5 @@ public class myApp extends Application {
         }
         super.onTerminate();
     }
-    //ssl
+
 }

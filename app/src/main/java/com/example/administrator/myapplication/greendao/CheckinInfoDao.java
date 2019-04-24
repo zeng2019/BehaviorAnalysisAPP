@@ -29,7 +29,8 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         public final static Property Ibeacn_sn = new Property(2, String.class, "ibeacn_sn", false, "IBEACN_SN");
         public final static Property Ibeacn_id = new Property(3, long.class, "ibeacn_id", false, "IBEACN_ID");
         public final static Property Status = new Property(4, boolean.class, "status", false, "STATUS");
-        public final static Property Time = new Property(5, long.class, "time", false, "TIME");
+        public final static Property Position = new Property(5, String.class, "position", false, "POSITION");
+        public final static Property Time = new Property(6, java.util.Date.class, "time", false, "TIME");
     }
 
 
@@ -50,7 +51,8 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
                 "\"IBEACN_SN\" TEXT," + // 2: ibeacn_sn
                 "\"IBEACN_ID\" INTEGER NOT NULL ," + // 3: ibeacn_id
                 "\"STATUS\" INTEGER NOT NULL ," + // 4: status
-                "\"TIME\" INTEGER NOT NULL );"); // 5: time
+                "\"POSITION\" TEXT," + // 5: position
+                "\"TIME\" INTEGER);"); // 6: time
     }
 
     /** Drops the underlying database table. */
@@ -79,7 +81,16 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         }
         stmt.bindLong(4, entity.getIbeacn_id());
         stmt.bindLong(5, entity.getStatus() ? 1L: 0L);
-        stmt.bindLong(6, entity.getTime());
+ 
+        String position = entity.getPosition();
+        if (position != null) {
+            stmt.bindString(6, position);
+        }
+ 
+        java.util.Date time = entity.getTime();
+        if (time != null) {
+            stmt.bindLong(7, time.getTime());
+        }
     }
 
     @Override
@@ -102,7 +113,16 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         }
         stmt.bindLong(4, entity.getIbeacn_id());
         stmt.bindLong(5, entity.getStatus() ? 1L: 0L);
-        stmt.bindLong(6, entity.getTime());
+ 
+        String position = entity.getPosition();
+        if (position != null) {
+            stmt.bindString(6, position);
+        }
+ 
+        java.util.Date time = entity.getTime();
+        if (time != null) {
+            stmt.bindLong(7, time.getTime());
+        }
     }
 
     @Override
@@ -118,7 +138,8 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // ibeacn_sn
             cursor.getLong(offset + 3), // ibeacn_id
             cursor.getShort(offset + 4) != 0, // status
-            cursor.getLong(offset + 5) // time
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5), // position
+            cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)) // time
         );
         return entity;
     }
@@ -130,7 +151,8 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         entity.setIbeacn_sn(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setIbeacn_id(cursor.getLong(offset + 3));
         entity.setStatus(cursor.getShort(offset + 4) != 0);
-        entity.setTime(cursor.getLong(offset + 5));
+        entity.setPosition(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
+        entity.setTime(cursor.isNull(offset + 6) ? null : new java.util.Date(cursor.getLong(offset + 6)));
      }
     
     @Override

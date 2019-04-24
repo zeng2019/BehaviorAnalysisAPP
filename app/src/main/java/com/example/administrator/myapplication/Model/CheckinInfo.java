@@ -3,6 +3,9 @@ package com.example.administrator.myapplication.Model;
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Id;
 import org.greenrobot.greendao.annotation.Generated;
+
+import java.util.Date;
+
 /**
  * 名称     ：CheckinInfo
  * 主要内容 ：用户表
@@ -26,14 +29,17 @@ public class CheckinInfo {
     //status true 表示进入，false 表示离开
     private boolean status;
     //
-    private long time;
-    @Generated(hash = 1588553559)
-    public CheckinInfo(Long id, String email, String ibeacn_sn, long ibeacn_id, boolean status, long time) {
+    private String position;
+    private Date time;
+    @Generated(hash = 1895782417)
+    public CheckinInfo(Long id, String email, String ibeacn_sn, long ibeacn_id,
+            boolean status, String position, Date time) {
         this.id = id;
         this.email = email;
         this.ibeacn_sn = ibeacn_sn;
         this.ibeacn_id = ibeacn_id;
         this.status = status;
+        this.position = position;
         this.time = time;
     }
     @Generated(hash = 370604973)
@@ -44,6 +50,12 @@ public class CheckinInfo {
     }
     public void setId(Long id) {
         this.id = id;
+    }
+    public String getEmail() {
+        return this.email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
     public String getIbeacn_sn() {
         return this.ibeacn_sn;
@@ -63,17 +75,18 @@ public class CheckinInfo {
     public void setStatus(boolean status) {
         this.status = status;
     }
-    public long getTime() {
+    public String getPosition() {
+        return this.position;
+    }
+    public void setPosition(String position) {
+        this.position = position;
+    }
+    public Date getTime() {
         return this.time;
     }
-    public void setTime(long time) {
+    public void setTime(Date time) {
         this.time = time;
     }
-    public String getEmail() {
-        return this.email;
-    }
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
-}
+
+  }

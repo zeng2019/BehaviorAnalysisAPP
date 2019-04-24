@@ -563,9 +563,6 @@ public class MainActivity extends BaseActivity
     {
         Log.d("MainActivity", "in queryAll():查找所有位置锚点信息！");
         DaoSession daoSession = ((myApp) getApplication()).getDaoSession();
-//        String nodePos ="";
-//        double longitude = 0.0;
-//        double latitude = 0.0;
         List<nodeInfo> nodeList = daoSession.loadAll(nodeInfo.class);
 
 /*        for(int i=0;i<nodeList.size();i++)

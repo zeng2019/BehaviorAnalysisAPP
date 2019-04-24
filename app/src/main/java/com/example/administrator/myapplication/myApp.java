@@ -1,6 +1,7 @@
 package com.example.administrator.myapplication;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteDatabase;
 
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
@@ -28,7 +29,7 @@ public class myApp extends Application {
     //数据库操作全局对象
     SensoroManager sensoroManager;
     private DaoSession daoSession;
-    private  DaoMaster daoMaster; //增加，删除表项时，取消注释。
+//    private  DaoMaster daoMaster; //希望将数据库保存到sd卡时，注释掉，其它情况需要取消注释。
     public boolean created_flag = false; //该标志用于表明 nodeInfo 数据库是否已经被创建，避免第二次运行app时重复创建该数据库
     public boolean checkinState = false; //该标志用于表明是否成功记录时间。
     @Override
@@ -61,7 +62,6 @@ public class myApp extends Application {
                  //其他配置
                 .build();
 
-
         //配置OkGo
         OkGo.getInstance().init(this)
                 .setOkHttpClient(okHttpClient)
@@ -86,15 +86,14 @@ public class myApp extends Application {
      */
 
     private void initGreenDao(){
-        //greenDao在升级数据库时会删除数据库，从重新建表。在使用时注意。
-        String db="info.db";
-        //
+        //greenDao在升级数据库时会删除数据库，从重新建表。在使用时注意。以下代码实现在手机内存储数据库
+//        String db="info.db";
 //        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this,db,null);
-//        //
 //        SQLiteDatabase database = devOpenHelper.getWritableDatabase();
-//        //
-//        DaoMaster daoMaster = new DaoMaster(database);
-        //以下代码用于增加，删除表时使用。平时不用。
+//        daoMaster = new DaoMaster(database);
+//        daoSession = daoMaster.newSession();
+
+        //以下代码用于增加，删除等操作数据表时使用。
         /**************** begin ********************/
 //        //MigrationHelper.DEBUG = true;  //if you want see the log info,default is false
 //        MySQLiteOpenHelper helper = new MySQLiteOpenHelper(this, "info.db",
@@ -102,6 +101,7 @@ public class myApp extends Application {
 //        daoMaster = new DaoMaster(helper.getWritableDatabase());
 //        daoSession =daoMaster.newSession();
         /****************** end *******************/
+        //以下代码实现将数据库保存在sd卡上。
         daoSession = GreenDaoHelper.getDaoSession(this);
 //        daoSession.getCheckinInfoDao().deleteAll();  //清空所有数据
 //        daoSession.getNodeInfoDao().deleteAll();   //清空所有数据

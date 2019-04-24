@@ -111,7 +111,7 @@ public class GreenDaoHelper extends Application {
                         return SQLiteDatabase.openOrCreateDatabase(getDatabasePath(name), null);
                     }
                 };
-                DaoMaster.OpenHelper helper = new DaoMaster.DevOpenHelper(wrapper,"test.db",null);
+                DaoMaster.OpenHelper helper = new DaoMaster.DevOpenHelper(wrapper,"info.db",null);
                 daoMaster = new DaoMaster(helper.getWritableDatabase()); //获取未加密的数据库
             }catch (Exception e){
                 e.printStackTrace();

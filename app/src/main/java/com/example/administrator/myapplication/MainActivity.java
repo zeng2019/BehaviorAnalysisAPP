@@ -139,6 +139,7 @@ public class MainActivity extends BaseActivity
             nodeinfo.setLatitude(34.61);
             nodeinfo.setLongitude(112.42);
             nodeinfo.setDescription("图书馆锚点");
+            //查找是否已存在相同记录，不存在插入数据库
             ((myApp) (getApplication())).getDaoSession().insert(nodeinfo);
 
             //工科教学楼
@@ -161,7 +162,7 @@ public class MainActivity extends BaseActivity
             nodeinfo3.setLatitude(34.61);
             nodeinfo3.setLongitude(112.43);
             nodeinfo3.setDescription("宿舍楼锚点");
-            ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
+             ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
 
             ((myApp) (getApplication())).created_flag = true; //避免重复创建
         }
@@ -262,7 +263,7 @@ public class MainActivity extends BaseActivity
                         Toast.makeText(MainActivity.this,"未能发现位置锚点，时间记录失败，请重试！",Toast.LENGTH_SHORT).show();
                     sensoroManager.stopService();
                 }
-            }, 30000);
+            }, 10000);
 
 
             //开启位置锚点扫描服务，开始扫描
@@ -285,6 +286,7 @@ public class MainActivity extends BaseActivity
         //
 //        Toast.makeText(MainActivity.this, "初始化位置锚点监听器！", Toast.LENGTH_SHORT).show();
         //
+        ((myApp)getApplication()).checkinState = false; //设置为false，表示还没有找到位置锚点。
         beaconManagerListener = new BeaconManagerListener() {
             @Override
             public void onNewBeacon(Beacon beacon) {
@@ -594,6 +596,18 @@ public class MainActivity extends BaseActivity
         return node;
     }
 
+    public boolean nodeIsExisted(String sn)
+    {
+        DaoSession daoSession = ((myApp) getApplication()).getDaoSession();
+        QueryBuilder<nodeInfo> qb = daoSession.queryBuilder(nodeInfo.class);
+        QueryBuilder<nodeInfo> studentQueryBuilder = qb.where(nodeInfoDao.Properties.NodeSN.eq(sn));
+        List<nodeInfo> nodeList = studentQueryBuilder.list(); //查出当前对应的数据
+        if (!nodeList.isEmpty()) {
+            return true;
+        }
+        return false;
+    }
+
 
     /*
      *
@@ -622,6 +636,7 @@ public class MainActivity extends BaseActivity
         checkinInfoDao.insert(checkinInfo);
         //将用户的时间信息读取出来，确认写入成功
         Log.d("MainActivity", "in recordTimeInfo():写入用户时间信息成功！");
+        Toast.makeText(MainActivity.this, "时间信息记录成功！", Toast.LENGTH_SHORT).show();
         List<CheckinInfo> checkList = queryCheckInfoByEmail(email);
         if (!checkList.isEmpty()) {
             for (int i=0; i<checkList.size(); i++) {

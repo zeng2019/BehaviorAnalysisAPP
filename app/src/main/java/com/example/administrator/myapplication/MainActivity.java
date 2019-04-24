@@ -21,8 +21,11 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -75,6 +78,8 @@ public class MainActivity extends BaseActivity
     private TextView tv_pos_des;
     private TextView tv_longitude;
     private TextView tv_latitude;
+    private TextView tv_time;
+    private ListView tv_pos_list;
     private Button btn_checkin;
     private Toolbar toolbar;
     private DrawerLayout drawer;
@@ -201,6 +206,7 @@ public class MainActivity extends BaseActivity
                             @Override
                             // has bugs
                             public void onClick(View view) {
+                               ((myApp)getApplication()).checkinState = false; //设置为false，表示还没有找到位置锚点。
                                 startSensoroService(false);
 
                             }
@@ -233,8 +239,11 @@ public class MainActivity extends BaseActivity
         tv_pos_des = (TextView) findViewById(R.id.posDescription);
         tv_longitude = (TextView) findViewById(R.id.longtitude);
         tv_latitude = (TextView) findViewById(R.id.latitude);
+        tv_time = (TextView) findViewById(R.id.checkTime);
+        tv_pos_list = (ListView) findViewById(R.id.positionList);
         //填充界面显示的数据
         nav_header_username = (TextView) findViewById(R.id.nav_header_username);
+        nav_header_username.setText(email);
         nav_header_id = (TextView) findViewById(R.id.nav_header_id);
         nav_heder_img = (ImageView) findViewById(R.id.nav_header_img);
         //初始化工具栏
@@ -286,7 +295,7 @@ public class MainActivity extends BaseActivity
         //
 //        Toast.makeText(MainActivity.this, "初始化位置锚点监听器！", Toast.LENGTH_SHORT).show();
         //
-        ((myApp)getApplication()).checkinState = false; //设置为false，表示还没有找到位置锚点。
+ //       ((myApp)getApplication()).checkinState = false; //设置为false，表示还没有找到位置锚点。
         beaconManagerListener = new BeaconManagerListener() {
             @Override
             public void onNewBeacon(Beacon beacon) {
@@ -308,6 +317,27 @@ public class MainActivity extends BaseActivity
                     final String nodePos = node.getPosition();
                     final String longitude = node.getLongitude().toString();
                     final String latitude = node.getLatitude().toString();
+                    long time = System.currentTimeMillis();
+                    Date date = new Date(time);
+                    SimpleDateFormat stime = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+                    final String recTime = stime.format(date);
+                    //处理最近5条时间记录
+                    List<CheckinInfo> checkInList = queryCheckInfoByEmail(email);
+                    int numberOfRec = checkInList.size();
+                    if (numberOfRec > 5)
+                        numberOfRec = checkInList.size() - 5;
+                    else
+                        numberOfRec = 0;
+                    int j=1;
+                    final String[] checkInfo = new String[6];
+                    checkInfo[0] = "位置" + "             "+"时间";
+                    for(int i=checkInList.size()-1;i>numberOfRec-1;i--) {
+                        checkInfo[j++] = checkInList.get(i).getPosition() + "     " + stime.format(checkInList.get(i).getTime());
+                    }
+                    for (int i=0;i<6;i++)
+                        Log.d("MainActivity","最近记录："+checkInfo[i]);
+                    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.listview_item,checkInfo);
+
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -317,6 +347,8 @@ public class MainActivity extends BaseActivity
                             tv_pos_des.setText(nodePos);
                             tv_longitude.setText(longitude);
                             tv_latitude.setText(latitude);
+                            tv_time.setText(recTime);
+                            tv_pos_list.setAdapter(adapter);
                             sensoroManager.stopService();
                         }
                     });
@@ -357,7 +389,6 @@ public class MainActivity extends BaseActivity
         return key;
     }
 
-    //写一一个通知体
     /*
      *获取当前系统时间
      */
@@ -533,19 +564,19 @@ public class MainActivity extends BaseActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camera) {
+        if (id == R.id.nav_camera) { //个人信息修改
             startActivity(new Intent(this, greendaotest.class));
-        } else if (id == R.id.nav_gallery) {
+        } else if (id == R.id.nav_gallery) { //上传头像
             startActivity(new Intent(MainActivity.this, upImage.class));//修改
-        } else if (id == R.id.nav_slideshow) {
+        } /*else if (id == R.id.nav_slideshow) { //关于我们
 
         } else if (id == R.id.nav_manage) {
             startActivity(new Intent(MainActivity.this, SettingsActivity.class));
-        } else if (id == R.id.nav_share) {
+        } */else if (id == R.id.nav_share) { //分享给好友
 
-        } else if (id == R.id.nav_send) {
+        } /*else if (id == R.id.nav_send) {
 
-        } else if (id == R.id.nav_quit) {
+        } */else if (id == R.id.nav_quit) { //退出程序
             startActivity(new Intent(MainActivity.this, LoginActivity.class));//从主界面退到登陆界面
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

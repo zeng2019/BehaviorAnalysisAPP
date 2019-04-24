@@ -17,7 +17,7 @@
     <string name="title_activity_main">个人时间管理</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="nav_header_title">用户名</string>
+    <string name="nav_header_title">用户名:</string>
     <string name="nav_header_id">用户编号:</string>
     <string name="beacon_sn_text">设备序号:</string>
     <string name="beacon_id_text">位置编号:</string>

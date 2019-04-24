@@ -25,7 +25,7 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
      */
     public static class Properties {
         public final static Property Id = new Property(0, Long.class, "id", true, "_id");
-        public final static Property User_id = new Property(1, long.class, "user_id", false, "USER_ID");
+        public final static Property Email = new Property(1, String.class, "email", false, "EMAIL");
         public final static Property Ibeacn_sn = new Property(2, String.class, "ibeacn_sn", false, "IBEACN_SN");
         public final static Property Ibeacn_id = new Property(3, long.class, "ibeacn_id", false, "IBEACN_ID");
         public final static Property Status = new Property(4, boolean.class, "status", false, "STATUS");
@@ -46,7 +46,7 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"CHECKIN_INFO\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT ," + // 0: id
-                "\"USER_ID\" INTEGER NOT NULL ," + // 1: user_id
+                "\"EMAIL\" TEXT," + // 1: email
                 "\"IBEACN_SN\" TEXT," + // 2: ibeacn_sn
                 "\"IBEACN_ID\" INTEGER NOT NULL ," + // 3: ibeacn_id
                 "\"STATUS\" INTEGER NOT NULL ," + // 4: status
@@ -67,7 +67,11 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindLong(2, entity.getUser_id());
+ 
+        String email = entity.getEmail();
+        if (email != null) {
+            stmt.bindString(2, email);
+        }
  
         String ibeacn_sn = entity.getIbeacn_sn();
         if (ibeacn_sn != null) {
@@ -86,7 +90,11 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
         if (id != null) {
             stmt.bindLong(1, id);
         }
-        stmt.bindLong(2, entity.getUser_id());
+ 
+        String email = entity.getEmail();
+        if (email != null) {
+            stmt.bindString(2, email);
+        }
  
         String ibeacn_sn = entity.getIbeacn_sn();
         if (ibeacn_sn != null) {
@@ -106,7 +114,7 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
     public CheckinInfo readEntity(Cursor cursor, int offset) {
         CheckinInfo entity = new CheckinInfo( //
             cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0), // id
-            cursor.getLong(offset + 1), // user_id
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // email
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // ibeacn_sn
             cursor.getLong(offset + 3), // ibeacn_id
             cursor.getShort(offset + 4) != 0, // status
@@ -118,7 +126,7 @@ public class CheckinInfoDao extends AbstractDao<CheckinInfo, Long> {
     @Override
     public void readEntity(Cursor cursor, CheckinInfo entity, int offset) {
         entity.setId(cursor.isNull(offset + 0) ? null : cursor.getLong(offset + 0));
-        entity.setUser_id(cursor.getLong(offset + 1));
+        entity.setEmail(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
         entity.setIbeacn_sn(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setIbeacn_id(cursor.getLong(offset + 3));
         entity.setStatus(cursor.getShort(offset + 4) != 0);

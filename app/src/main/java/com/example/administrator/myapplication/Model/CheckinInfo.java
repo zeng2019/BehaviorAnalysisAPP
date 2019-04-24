@@ -16,7 +16,8 @@ public class CheckinInfo {
     @Id(autoincrement = true)
     private Long id;
     //
-    private long user_id;
+    //private long user_id;
+    private String email;
     //
     private String ibeacn_sn;
     //
@@ -26,11 +27,10 @@ public class CheckinInfo {
     private boolean status;
     //
     private long time;
-    @Generated(hash = 2131975694)
-    public CheckinInfo(Long id, long user_id, String ibeacn_sn, long ibeacn_id,
-            boolean status, long time) {
+    @Generated(hash = 1588553559)
+    public CheckinInfo(Long id, String email, String ibeacn_sn, long ibeacn_id, boolean status, long time) {
         this.id = id;
-        this.user_id = user_id;
+        this.email = email;
         this.ibeacn_sn = ibeacn_sn;
         this.ibeacn_id = ibeacn_id;
         this.status = status;
@@ -44,12 +44,6 @@ public class CheckinInfo {
     }
     public void setId(Long id) {
         this.id = id;
-    }
-    public long getUser_id() {
-        return this.user_id;
-    }
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
     }
     public String getIbeacn_sn() {
         return this.ibeacn_sn;
@@ -74,6 +68,12 @@ public class CheckinInfo {
     }
     public void setTime(long time) {
         this.time = time;
+    }
+    public String getEmail() {
+        return this.email;
+    }
+    public void setEmail(String email) {
+        this.email = email;
     }
 
 }

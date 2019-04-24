@@ -117,7 +117,7 @@ public class MainActivity extends BaseActivity
      */
     private void init() {
         initView(); //界面元素变量定义
-        initNodeInfo(); //初始化nodeInfo数据库
+     //   initNodeInfo(); //初始化nodeInfo数据库
         initCtrl();
         initHander();
         initUserInfo();
@@ -260,7 +260,7 @@ public class MainActivity extends BaseActivity
                 public void run() {
                     //       scan_flag = true;
                     //        btn_checkin.setText("记录时间");
-                    //       Toast.makeText(MainActivity.this,"扫描位置锚点，请稍候!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this,"停止位置锚点扫描服务!",Toast.LENGTH_SHORT).show();
                     sensoroManager.stopService();
                   //  Toast.makeText(MainActivity.this, "时间信息记录成功！", Toast.LENGTH_SHORT).show();
                 }
@@ -301,11 +301,10 @@ public class MainActivity extends BaseActivity
                 Log.d("MainActivity","查找到位置锚点信息！");
                 nodeInfo node = new nodeInfo();
                 node = queryBySN(sn);
-                //写用户时间记录信息：位置锚点的 sn 和 id，时间等
-
+                //写用户（基于email检索）时间记录信息：位置锚点的 sn 和 id，时间等
                 recordTimeInfo(sn, id, true);
 
-                writeText(sn);
+//                writeText(sn);
                 final String nodePos = node.getPosition();
                 final String longitude = node.getLongitude().toString();
                 final String latitude = node.getLatitude().toString();
@@ -609,10 +608,33 @@ public class MainActivity extends BaseActivity
         String beacon_sn = sn;
         long beacon_id = Long.parseLong(id);
         long time = System.currentTimeMillis();
-        long user_id = 1000;
-        CheckinInfo checkinInfo = new CheckinInfo(null, user_id, beacon_sn, beacon_id, status, time);
-     //   QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
+        //根据用户的 email，检索出用户信息
+        CheckinInfo checkinInfo = new CheckinInfo(null, email, beacon_sn, beacon_id, status, time);
+//     //   QueryBuilder<CheckinInfo> userQB = checkinInfoDao.queryBuilder();
         checkinInfoDao.insert(checkinInfo);
-        Log.d("MainActivity", "写入用户时间信息成功！");
+        //将用户的时间信息读取出来，确认写入成功
+        Log.d("MainActivity", "in recordTimeInfo():写入用户时间信息成功！");
+        List<CheckinInfo> checkList = queryCheckInfoByEmail(email);
+        if (!checkList.isEmpty()) {
+            for (int i=0; i<checkList.size(); i++) {
+                Log.d("MainActivity","in recordTimeInfo(),用户时间记录:"+ "Pos:"+checkList.get(i).getIbeacn_sn()+"Time:"+checkList.get(i).getTime());
+            }
+        } else
+            Log.d("MainActivity","in recordTimeInfo(): 用户没有时间记录信息！");
     }
+
+    /*
+    * 功能：查询用户所有时间记录信息
+    * 输入：email
+    * 输出：用户的时间记录信息列表
+    * */
+    public List queryCheckInfoByEmail(String user_email)
+    {
+        DaoSession daoSession = ((myApp) getApplication()).getDaoSession();
+        QueryBuilder<CheckinInfo> qb = daoSession.queryBuilder(CheckinInfo.class);
+        QueryBuilder<CheckinInfo> checkInQueryBuilder = qb.where(CheckinInfoDao.Properties.Email.eq(user_email));
+        List<CheckinInfo> checkList = checkInQueryBuilder.list(); //查出当前对应的数据
+        return checkList;
+    }
+
 }

@@ -20,7 +20,7 @@ android {
     }
 }
 greendao {
-    schemaVersion 3
+    schemaVersion 7
     daoPackage 'com.example.administrator.myapplication.greendao'
     targetGenDir 'src/main/java'
 }
@@ -49,4 +49,5 @@ dependencies {
     implementation 'com.loopj.android:android-async-http:1.4.9'
     //
     implementation 'org.greenrobot:greendao:3.2.2'
+    implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
 }

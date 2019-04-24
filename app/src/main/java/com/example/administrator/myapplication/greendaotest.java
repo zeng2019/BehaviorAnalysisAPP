@@ -56,7 +56,7 @@ public class greendaotest extends BaseActivity {
                     String searchAllInfo="";
                     for(int i=0;i<checkinInfoList.size();i++){
                         CheckinInfo checkinInfo=checkinInfoList.get(i);
-                        searchAllInfo+="ID:"+checkinInfo.getId()+"UserID:"+checkinInfo.getUser_id()+"SN:"+checkinInfo.getIbeacn_sn()+"Status:"+checkinInfo.getStatus()+"Time:"+checkinInfo.getTime()+"\n";
+                        searchAllInfo+="ID:"+checkinInfo.getId()+"UserID:"+checkinInfo.getEmail()+"SN:"+checkinInfo.getIbeacn_sn()+"Status:"+checkinInfo.getStatus()+"Time:"+checkinInfo.getTime()+"\n";
                     }
                     tv_qb_result.setText(searchAllInfo);
                 }

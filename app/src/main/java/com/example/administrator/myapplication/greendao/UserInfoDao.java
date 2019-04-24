@@ -29,6 +29,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         public final static Property Password = new Property(2, String.class, "password", false, "PASSWORD");
         public final static Property Email = new Property(3, String.class, "email", false, "EMAIL");
         public final static Property Telnumber = new Property(4, long.class, "telnumber", false, "TELNUMBER");
+        public final static Property School = new Property(5, String.class, "school", false, "SCHOOL");
     }
 
 
@@ -48,7 +49,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
                 "\"USERNAME\" TEXT," + // 1: username
                 "\"PASSWORD\" TEXT," + // 2: password
                 "\"EMAIL\" TEXT," + // 3: email
-                "\"TELNUMBER\" INTEGER NOT NULL );"); // 4: telnumber
+                "\"TELNUMBER\" INTEGER NOT NULL ," + // 4: telnumber
+                "\"SCHOOL\" TEXT);"); // 5: school
         // Add Indexes
         db.execSQL("CREATE UNIQUE INDEX " + constraint + "IDX_USER_INFO_EMAIL ON \"USER_INFO\"" +
                 " (\"EMAIL\" ASC);");
@@ -84,6 +86,11 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             stmt.bindString(4, email);
         }
         stmt.bindLong(5, entity.getTelnumber());
+ 
+        String school = entity.getSchool();
+        if (school != null) {
+            stmt.bindString(6, school);
+        }
     }
 
     @Override
@@ -110,6 +117,11 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             stmt.bindString(4, email);
         }
         stmt.bindLong(5, entity.getTelnumber());
+ 
+        String school = entity.getSchool();
+        if (school != null) {
+            stmt.bindString(6, school);
+        }
     }
 
     @Override
@@ -124,7 +136,8 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
             cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // username
             cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // password
             cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3), // email
-            cursor.getLong(offset + 4) // telnumber
+            cursor.getLong(offset + 4), // telnumber
+            cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5) // school
         );
         return entity;
     }
@@ -136,6 +149,7 @@ public class UserInfoDao extends AbstractDao<UserInfo, Long> {
         entity.setPassword(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
         entity.setEmail(cursor.isNull(offset + 3) ? null : cursor.getString(offset + 3));
         entity.setTelnumber(cursor.getLong(offset + 4));
+        entity.setSchool(cursor.isNull(offset + 5) ? null : cursor.getString(offset + 5));
      }
     
     @Override

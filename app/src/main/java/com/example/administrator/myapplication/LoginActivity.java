@@ -71,16 +71,16 @@ public class LoginActivity extends BaseActivity {
 
         //*******************begin****************************************/
         //先写入一个测试用户信息至数据库，方便测试。APP开发成功后，可删除。
-/*        Log.d("LoginActivity", "in onCreate(): 创建测试用户");
+ /*       Log.d("LoginActivity", "in onCreate(): 创建测试用户");
         //测试用户信息
+        String emailtest = "123"+Math.random()+"@123.com"
             UserInfo userinfo = new UserInfo();
-            userinfo.setEmail("123@123.com");
+            userinfo.setEmail(emailtest);
             userinfo.setPassword("12345");
             userinfo.setTelnumber(1234567890);
             userinfo.setUsername("TestOne");
             userinfo.setSchool("河南科技大学");
-            ((myApp) (getApplication())).getDaoSession().insert(userinfo);
-//        userInfoDao.insert(userinfo);*/
+            ((myApp) (getApplication())).getDaoSession().insert(userinfo);*/
         //**************************end **********************************/
 
         // Set up the login form.
@@ -186,7 +186,7 @@ public class LoginActivity extends BaseActivity {
             //如果输入的格式正确，显示验证等待对话框，并启动验证线程
             showProgress(true);
             //revised by zeng, 20190416,仅仅用于测试
-/*            if (email.equals("123@123.com") && password.equals("12345"))
+            if (email.equals("123@123.com") && password.equals("12345"))
             {
                 showToast("登录成功");
                 Intent in = new Intent(LoginActivity.this, MainActivity.class);
@@ -194,10 +194,10 @@ public class LoginActivity extends BaseActivity {
                 startActivity(in);
                 finish();
             }
-            else {*/
+            else {
                 mAuthTask = new UserLoginTask(email, password); //非测试账号，登录数据库检测
                 mAuthTask.execute((Void) null);
-//            }
+            }
             ////////////////////
         }
     }

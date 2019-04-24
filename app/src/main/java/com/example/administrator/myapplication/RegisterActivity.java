@@ -94,11 +94,11 @@ public class RegisterActivity extends Activity {
         }
         //email
         if(TextUtils.isEmpty(email)){
-            emailInput.setError("必须填写!");
+            emailInput.setError("邮箱必须填写!");
             focusView =emailInput;
             cancel =true;
         }else if (!isEmailVaild(email)){
-            emailInput.setError("邮箱格式错误！");
+            emailInput.setError("邮箱格式错误，请确认！");
             focusView = emailInput;
             cancel = true;
         }
@@ -134,7 +134,7 @@ public class RegisterActivity extends Activity {
           // showToast(s,mcontext);
            long tel = Long.parseLong(telNumber);
 
-           UserInfo userInfo = new UserInfo(null,userName,password,email,tel);
+           UserInfo userInfo = new UserInfo(null,userName,password,email,tel,"河南科技大学");
            //查询邮箱是否被注册
            QueryBuilder<UserInfo> userQB = userInfoDao.queryBuilder();
            if(userQB.where(UserInfoDao.Properties.Email.eq(email)).list().size() > 0){
@@ -142,12 +142,17 @@ public class RegisterActivity extends Activity {
                showToast("邮箱已被使用，注册失败!",mcontext);
            }else {
                userInfoDao.insert(userInfo);
-               showToast("注册成功！",mcontext);
-               startActivity(new Intent(this,LoginActivity.class));
+               showToast("用户注册成功！",mcontext);
+               //用户注册成功之后，应该直接跳转主活动还是跳转登录活动，有待考虑。
+               // 如果跳转主活动，则需要传递email信息，用于检索并展示个人信息；
+               //如果跳转登录活动，则应该传递邮箱地址与密码，用户只需要，直接点击登录。
+               Intent in = new Intent(this, MainActivity.class);
+               in.putExtra("email",email);
+               startActivity(in);
            }
 
        }catch (Exception e){
-           Log.d("RegisterUser","Insert UserInfo is failed");
+           Log.d("新用户注册","新用户信息插入失败！");
        }
     }
     /**

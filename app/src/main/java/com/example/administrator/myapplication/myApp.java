@@ -1,13 +1,9 @@
 package com.example.administrator.myapplication;
 
 import android.app.Application;
-import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
 
 import com.bumptech.glide.annotation.GlideModule;
-import com.bumptech.glide.annotation.GlideOption;
 import com.bumptech.glide.module.AppGlideModule;
-import com.example.administrator.myapplication.Model.UserInfo;
 import com.example.administrator.myapplication.greendao.DaoMaster;
 import com.example.administrator.myapplication.greendao.DaoSession;
 import com.lzy.okgo.OkGo;
@@ -32,6 +28,7 @@ public class myApp extends Application {
     //数据库操作全局对象
     SensoroManager sensoroManager;
     private DaoSession daoSession;
+//    private  DaoMaster daoMaster;
     public boolean created_flag = false; //该标志用于表明 nodeInfo 数据库是否已经被创建，避免第二次运行app时重复创建该数据库
     @Override
     public void onCreate(){
@@ -91,12 +88,23 @@ public class myApp extends Application {
         //greenDao在升级数据库时会删除数据库，从重新建表。在使用时注意。
         String db="info.db";
         //
-        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this,db,null);
-        //
-        SQLiteDatabase database = devOpenHelper.getWritableDatabase();
-        //
-        DaoMaster daoMaster = new DaoMaster(database);
-        daoSession =daoMaster.newSession();
+//        DaoMaster.DevOpenHelper devOpenHelper = new DaoMaster.DevOpenHelper(this,db,null);
+//        //
+//        SQLiteDatabase database = devOpenHelper.getWritableDatabase();
+//        //
+//        DaoMaster daoMaster = new DaoMaster(database);
+        //以下代码用于增加，删除表时使用。平时不用。
+        /**************** begin ********************/
+//        //MigrationHelper.DEBUG = true;  //if you want see the log info,default is false
+//        MySQLiteOpenHelper helper = new MySQLiteOpenHelper(this, "info.db",
+//                null);
+//        daoMaster = new DaoMaster(helper.getWritableDatabase());
+//        daoSession =daoMaster.newSession();
+        /****************** end *******************/
+        daoSession = GreenDaoHelper.getDaoSession(this);
+//        daoSession.getCheckinInfoDao().deleteAll();  //清空所有数据
+//        daoSession.getNodeInfoDao().deleteAll();   //清空所有数据
+//        daoSession.getUserInfoDao().deleteAll();   //清空所有数据
 
     }
     public DaoSession getDaoSession(){

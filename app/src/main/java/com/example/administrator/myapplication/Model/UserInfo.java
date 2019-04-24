@@ -17,14 +17,17 @@ public class UserInfo {
     private String email;
     //
     private long telnumber;
-    @Generated(hash = 1526098230)
-    public UserInfo(Long id, String username, String password, String email,
-            long telnumber) {
+    private String school;
+
+    @Generated(hash = 291919525)
+    public UserInfo(Long id, String username, String password, String email, long telnumber,
+            String school) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
         this.telnumber = telnumber;
+        this.school = school;
     }
     @Generated(hash = 1279772520)
     public UserInfo() {
@@ -58,5 +61,11 @@ public class UserInfo {
     }
     public void setTelnumber(long telnumber) {
         this.telnumber = telnumber;
+    }
+    public String getSchool() {
+        return this.school;
+    }
+    public void setSchool(String school) {
+        this.school = school;
     }
 }

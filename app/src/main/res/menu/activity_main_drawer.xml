@@ -21,10 +21,6 @@
             <!--android:id="@+id/nav_manage"-->
             <!--android:icon="@drawable/ic_menu_manage"-->
             <!--android:title="设置" />-->
-    </group>
-
-    <item android:title="Communicate">
-        <menu>
             <item
                 android:id="@+id/nav_share"
                 android:icon="@drawable/ic_menu_share"
@@ -37,7 +33,6 @@
                 android:id="@+id/nav_quit"
                 android:icon="@drawable/ic_menu_send"
                 android:title="退出登录"/>
-        </menu>
-    </item>
+    </group>
 
 </menu>

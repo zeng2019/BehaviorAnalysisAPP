@@ -569,14 +569,9 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) { //个人信息修改
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    nav_header_username.setText(email);
-//                }
-//            });
-
-            startActivity(new Intent(this, personInfoRevise.class));
+            Intent in = new Intent(MainActivity.this, personInfoRevise.class);
+            in.putExtra("email",email);
+            startActivity(in);
         } else if (id == R.id.nav_gallery) { //上传头像
             startActivity(new Intent(MainActivity.this, upImage.class));//修改
         } /*else if (id == R.id.nav_slideshow) { //关于我们

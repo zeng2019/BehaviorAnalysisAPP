@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.annotation.NonNull;
+import android.support.design.widget.BottomNavigationView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.support.design.widget.NavigationView;
@@ -69,7 +71,7 @@ public class MainActivity extends BaseActivity
     private static boolean isExit = false;
     //
     private TextView nav_header_username;
-    private TextView nav_header_id;
+    private TextView nav_header_email;
     private ImageView nav_heder_img;
     private TextView tv_sn;
     private TextView tv_id;
@@ -109,7 +111,6 @@ public class MainActivity extends BaseActivity
 
         //初始化
         init();
-
     }
 
     @Override
@@ -129,12 +130,12 @@ public class MainActivity extends BaseActivity
     }
 
     /*
-     * 将节点信息写入本地数据库表nodeInfo，设置created_flag = true;
+     * 将节点信息写入本地数据库表nodeInfo
      */
     public void initNodeInfo() {
 
         Log.d("MainActivity", "in initNodeInfo");
-        if (!((myApp) (getApplication())).created_flag) {
+        if (((myApp) (getApplication())).getDaoSession() == null) {
             //图书馆位置
             nodeInfo nodeinfo = new nodeInfo();
             nodeinfo.setNodeID("0x77BBCB73"); //Major + minor
@@ -168,8 +169,6 @@ public class MainActivity extends BaseActivity
             nodeinfo3.setLongitude(112.43);
             nodeinfo3.setDescription("宿舍楼锚点");
              ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
-
-            ((myApp) (getApplication())).created_flag = true; //避免重复创建
         }
 
         List<nodeInfo> nodeList = queryAll();
@@ -243,17 +242,43 @@ public class MainActivity extends BaseActivity
         tv_pos_list = (ListView) findViewById(R.id.positionList);
         //填充界面显示的数据
         nav_header_username = (TextView) findViewById(R.id.nav_header_username);
+        nav_header_email = (TextView) findViewById(R.id.nav_header_mail);
         nav_heder_img = (ImageView) findViewById(R.id.nav_header_img);
         //初始化工具栏
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+       //处理左边滑动菜单栏
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
         navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+        navigationView.setCheckedItem(R.id.nav_camera); //默认选中修改个人信息选项
+        navigationView.setNavigationItemSelectedListener(this); //设置滑动菜单项选中事件监听器，当选择某一菜单项时，将回调onNavigationItemSelected()方法。
+
+        //处理底部导航栏
+        BottomNavigationView bottomNavView = (BottomNavigationView)findViewById(R.id.navigation);
+        bottomNavView.setSelectedItemId(R.id.navigation_home);
+        bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                // Handle navigation view item clicks here.
+                int id = item.getItemId();
+
+                if (id == R.id.navigation_home) { //时间记录页面处理，默认选中，不需要处理
+
+                } else if (id == R.id.navigation_statistic) { //时间统计页面
+                    Toast.makeText(MainActivity.this,"选中了时间统计！",Toast.LENGTH_SHORT).show();
+                } else if (id == R.id.navigation_analysis) { //时间分析页面
+                    Toast.makeText(MainActivity.this,"选中了时间分析！",Toast.LENGTH_SHORT).show();
+                } else { //关于我们页面
+                    Toast.makeText(MainActivity.this,"选中了关于我们！",Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
     }
 
     /**
@@ -322,23 +347,23 @@ public class MainActivity extends BaseActivity
                     //处理最近5条时间记录
                     List<CheckinInfo> checkInList = queryCheckInfoByEmail(email);
                     int numberOfRec = checkInList.size();
-                    if (numberOfRec > 5)
+                    int number = 0;
+                    if (numberOfRec > 5) {
                         numberOfRec = checkInList.size() - 5;
-                    else
+                        number = 5;
+                    }else {
                         numberOfRec = 0;
+                        number = checkInList.size();
+                    }
                     int j=1;
-                    final String[] checkInfo = new String[6];
+                    final String[] checkInfo = new String[number+1];
                     checkInfo[0] = "位置" + "             "+"时间";
                     for(int i=checkInList.size()-1;i>numberOfRec-1;i--) {
                         checkInfo[j] = checkInList.get(i).getPosition() + "     " + stime.format(checkInList.get(i).getTime());
                         j = j + 1;
                     }
 
-                    if (j <6) {
-                        checkInfo[j] = " ";
-                        j = j + 1;
-                    }
-                    for (int i=0;i<6;i++)
+                    for (int i=0;i<checkInfo.length;i++)
                         Log.d("MainActivity","最近记录："+checkInfo[i]);
                     final ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.listview_item,checkInfo);
 
@@ -586,7 +611,7 @@ public class MainActivity extends BaseActivity
             startActivity(new Intent(MainActivity.this, LoginActivity.class));//从主界面退到登陆界面
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+        drawer.closeDrawer(GravityCompat.START); //将滑动菜单关闭
         return true;
     }
 

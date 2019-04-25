@@ -71,16 +71,20 @@ public class LoginActivity extends BaseActivity {
 
         //*******************begin****************************************/
         //先写入一个测试用户信息至数据库，方便测试。APP开发成功后，可删除。
- /*       Log.d("LoginActivity", "in onCreate(): 创建测试用户");
+/*        Log.d("LoginActivity", "in onCreate(): 创建测试用户");
         //测试用户信息
-        String emailtest = "123"+Math.random()+"@123.com"
+        if(userInfoDao == null) {
+            String emailtest = "123@123.com";
             UserInfo userinfo = new UserInfo();
             userinfo.setEmail(emailtest);
             userinfo.setPassword("12345");
             userinfo.setTelnumber(1234567890);
             userinfo.setUsername("TestOne");
             userinfo.setSchool("河南科技大学");
-            ((myApp) (getApplication())).getDaoSession().insert(userinfo);*/
+         //   ((myApp) (getApplication())).getDaoSession().insert(userinfo);
+            userInfoDao = ((myApp)getApplication()).getDaoSession().getUserInfoDao();
+            userInfoDao.insert(userinfo);
+            }*/
         //**************************end **********************************/
 
         // Set up the login form.

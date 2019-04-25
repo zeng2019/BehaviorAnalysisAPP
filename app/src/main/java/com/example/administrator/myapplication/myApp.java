@@ -30,7 +30,6 @@ public class myApp extends Application {
     SensoroManager sensoroManager;
     private DaoSession daoSession;
     private  DaoMaster daoMaster; //希望将数据库保存到sd卡时，注释掉，其它情况需要取消注释。
-    public boolean created_flag = false; //该标志用于表明 nodeInfo 数据库是否已经被创建，避免第二次运行app时重复创建该数据库
     public boolean checkinState = false; //该标志用于表明是否成功记录时间。
     @Override
     public void onCreate(){

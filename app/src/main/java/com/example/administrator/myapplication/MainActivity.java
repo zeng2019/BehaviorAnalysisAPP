@@ -243,8 +243,6 @@ public class MainActivity extends BaseActivity
         tv_pos_list = (ListView) findViewById(R.id.positionList);
         //填充界面显示的数据
         nav_header_username = (TextView) findViewById(R.id.nav_header_username);
-        nav_header_username.setText(email);
-        nav_header_id = (TextView) findViewById(R.id.nav_header_id);
         nav_heder_img = (ImageView) findViewById(R.id.nav_header_img);
         //初始化工具栏
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -332,7 +330,13 @@ public class MainActivity extends BaseActivity
                     final String[] checkInfo = new String[6];
                     checkInfo[0] = "位置" + "             "+"时间";
                     for(int i=checkInList.size()-1;i>numberOfRec-1;i--) {
-                        checkInfo[j++] = checkInList.get(i).getPosition() + "     " + stime.format(checkInList.get(i).getTime());
+                        checkInfo[j] = checkInList.get(i).getPosition() + "     " + stime.format(checkInList.get(i).getTime());
+                        j = j + 1;
+                    }
+
+                    if (j <6) {
+                        checkInfo[j] = " ";
+                        j = j + 1;
                     }
                     for (int i=0;i<6;i++)
                         Log.d("MainActivity","最近记录："+checkInfo[i]);
@@ -545,7 +549,7 @@ public class MainActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //noinspection SimplifiableIfStatement. 右边的配置选项，暂时不做处理！！
         if (id == R.id.action_settings) {
             return true;
         }
@@ -565,7 +569,14 @@ public class MainActivity extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_camera) { //个人信息修改
-            startActivity(new Intent(this, greendaotest.class));
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    nav_header_username.setText(email);
+//                }
+//            });
+
+            startActivity(new Intent(this, personInfoRevise.class));
         } else if (id == R.id.nav_gallery) { //上传头像
             startActivity(new Intent(MainActivity.this, upImage.class));//修改
         } /*else if (id == R.id.nav_slideshow) { //关于我们

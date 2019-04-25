@@ -112,5 +112,6 @@
     <string name="section_format">Hello World from section: %1$d</string>
     <string name="title_activity_map">MapActivity</string>
     <string name="title_activity_user_info">个人信息</string>
+    <string name="userName">unknow</string>
 
 </resources>

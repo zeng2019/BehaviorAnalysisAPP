@@ -53,10 +53,11 @@
                 android:resource="@xml/image_paths_public" />
         </provider>
 
-        <service android:name="com.sensoro.beacon.kit.BeaconService"></service>
-        <service android:name="com.sensoro.beacon.kit.IntentProcessorService"></service>
+        <service android:name="com.sensoro.beacon.kit.BeaconService" />
+        <service android:name="com.sensoro.beacon.kit.IntentProcessorService" />
 
-        <activity android:name=".personInfoRevise"></activity>
+        <activity android:name=".personInfoRevise" />
+        <activity android:name=".aboutus"></activity>
     </application>
 
 </manifest>

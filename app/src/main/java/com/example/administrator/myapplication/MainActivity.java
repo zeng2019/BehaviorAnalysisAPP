@@ -135,7 +135,6 @@ public class MainActivity extends BaseActivity
     public void initNodeInfo() {
 
         Log.d("MainActivity", "in initNodeInfo");
-        if (((myApp) (getApplication())).getDaoSession() == null) {
             //图书馆位置
             nodeInfo nodeinfo = new nodeInfo();
             nodeinfo.setNodeID("0x77BBCB73"); //Major + minor
@@ -169,7 +168,6 @@ public class MainActivity extends BaseActivity
             nodeinfo3.setLongitude(112.43);
             nodeinfo3.setDescription("宿舍楼锚点");
              ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
-        }
 
         List<nodeInfo> nodeList = queryAll();
         for(int i=0; i<nodeList.size(); i++) {
@@ -274,7 +272,8 @@ public class MainActivity extends BaseActivity
                 } else if (id == R.id.navigation_analysis) { //时间分析页面
                     Toast.makeText(MainActivity.this,"选中了时间分析！",Toast.LENGTH_SHORT).show();
                 } else { //关于我们页面
-                    Toast.makeText(MainActivity.this,"选中了关于我们！",Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(MainActivity.this,"选中了关于我们！",Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(MainActivity.this, aboutus.class));
                 }
                 return true;
             }

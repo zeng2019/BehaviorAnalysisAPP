@@ -33,9 +33,15 @@ import com.example.administrator.myapplication.Model.nodeInfo;
 import com.example.administrator.myapplication.greendao.DaoSession;
 import com.example.administrator.myapplication.greendao.UserInfoDao;
 import com.example.administrator.myapplication.utils.AppManager;
+import com.mysql.jdbc.Connection;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -68,24 +74,6 @@ public class LoginActivity extends BaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
-        //*******************begin****************************************/
-        //先写入一个测试用户信息至数据库，方便测试。APP开发成功后，可删除。
-/*        Log.d("LoginActivity", "in onCreate(): 创建测试用户");
-        //测试用户信息
-        if(userInfoDao == null) {
-            String emailtest = "123@123.com";
-            UserInfo userinfo = new UserInfo();
-            userinfo.setEmail(emailtest);
-            userinfo.setPassword("12345");
-            userinfo.setTelnumber(1234567890);
-            userinfo.setUsername("TestOne");
-            userinfo.setSchool("河南科技大学");
-         //   ((myApp) (getApplication())).getDaoSession().insert(userinfo);
-            userInfoDao = ((myApp)getApplication()).getDaoSession().getUserInfoDao();
-            userInfoDao.insert(userinfo);
-            }*/
-        //**************************end **********************************/
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -190,7 +178,7 @@ public class LoginActivity extends BaseActivity {
             //如果输入的格式正确，显示验证等待对话框，并启动验证线程
             showProgress(true);
             //revised by zeng, 20190416,仅仅用于测试
-            if (email.equals("123@123.com") && password.equals("12345"))
+/*            if (email.equals("123@123.com") && password.equals("12345"))
             {
                 showToast("登录成功");
                 Intent in = new Intent(LoginActivity.this, MainActivity.class);
@@ -198,11 +186,11 @@ public class LoginActivity extends BaseActivity {
                 startActivity(in);
                 finish();
             }
-            else {
-                mAuthTask = new UserLoginTask(email, password); //非测试账号，登录数据库检测
+            else {*/
+                mAuthTask = new UserLoginTask(email, password); //通过JDBC，登录mysql数据库检测
                 mAuthTask.execute((Void) null);
-            }
-            ////////////////////
+//            }
+            ////***********************//////
         }
     }
 
@@ -282,15 +270,17 @@ public class LoginActivity extends BaseActivity {
         protected Boolean doInBackground(Void... params) {
             // TODO: attempt authentication against a network service.
 
+            boolean loginFlag = false;
+
               try {
                 // Simulate network access.//模拟用户验证耗时
 
                 Thread.sleep(2000);
             } catch (InterruptedException e) {
-                return false;
+                  e.printStackTrace();
             }
             //使用数据库登陆
-            DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
+/*            DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
             userInfoDao = daoSession.getUserInfoDao();
             QueryBuilder<UserInfo> userQB = userInfoDao.queryBuilder();
 
@@ -299,7 +289,45 @@ public class LoginActivity extends BaseActivity {
             }else {
                 showToast("登录错误！");
                   return false;
+            }*/
+            //直连后台数据库，查找用户信息，并登陆
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                try {
+                    Connection cn;
+                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.0.110:3306/INFO","zeng","123456");
+
+                    String sql="select * from userInfo";
+/*                    PreparedStatement pst = cn.prepareStatement(sql);
+                    ResultSet rs = (ResultSet) pst.executeQuery();*/
+                    Statement st = cn.createStatement();
+                    ResultSet rs = st.executeQuery(sql);
+                    while(rs.next()) {
+                        String userEmail = rs.getString("user_email");
+                        String userPass = rs.getString("user_password");
+                        String userName = rs.getString("user_name");
+                        if (userEmail.equals(mEmail) && userPass.equals(mPassword)) {
+                            showToast("欢迎用户："+userName+" 登陆系统！");
+                            loginFlag = true;
+                        }
+                        if(loginFlag)
+                            break;
+                    }
+                    //关闭数据库相关资源
+                    if(cn!=null)
+                        cn.close();
+                    if (st!=null)
+                        st.close();
+                    if (rs!=null)
+                        rs.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
             }
+            //************************* end ******************************
+            return loginFlag;
 
         }
 
@@ -310,7 +338,7 @@ public class LoginActivity extends BaseActivity {
             showProgress(false);//隐藏验证延时对话框
 
             if (success) {
-                showToast("登录成功");
+                showToast("登录成功！");
                 Intent in = new Intent(LoginActivity.this, MainActivity.class);
                 in.putExtra("email",mEmail);
                 startActivity(in);

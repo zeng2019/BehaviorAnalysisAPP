@@ -8,7 +8,7 @@
     <string name="action_sign_in_short">sign in</string>
     <string name="error_invalid_email">邮箱错误！</string>
     <string name="error_invalid_password">密码格式错误！</string>
-    <string name="error_incorrect_password">密码错误！</string>
+    <string name="error_incorrect_password">用户邮箱或密码错误！</string>
     <string name="error_field_required">用户名不能为空！</string>
     <string name="permission_rationale">"邮箱不存在！"</string>
     <string name="mregister">注册</string>

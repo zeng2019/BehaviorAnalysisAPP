@@ -13,7 +13,15 @@ import android.widget.Toast;
 import com.example.administrator.myapplication.Model.UserInfo;
 import com.example.administrator.myapplication.greendao.DaoSession;
 import com.example.administrator.myapplication.greendao.UserInfoDao;
+import com.mysql.jdbc.Connection;
+import com.mysql.jdbc.StreamingNotifiable;
+
 import org.greenrobot.greendao.query.QueryBuilder;
+
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 
 /**
@@ -108,6 +116,12 @@ public class RegisterActivity extends Activity {
         }else {
             //信息无误后开始注册操作
             addUserInfo(userName,password,email,telNumber);
+//             {
+//                    showToast("用户注册成功！", mcontext);
+//                    Intent in = new Intent(this, MainActivity.class);
+//                    in.putExtra("email", email);
+//                    startActivity(in);
+//            }
         }
 
     }
@@ -129,12 +143,10 @@ public class RegisterActivity extends Activity {
      * 注册操作
      */
     private void addUserInfo(String userName,String password,String email,String telNumber){
-       try {
-           //final String s = Long.toString(telNumber);
-          // showToast(s,mcontext);
-           long tel = Long.parseLong(telNumber);
 
-           UserInfo userInfo = new UserInfo(null,userName,password,email,tel,"河南科技大学");
+//           long tel = Long.parseLong(telNumber);
+
+/*           UserInfo userInfo = new UserInfo(null,userName,password,email,tel,"河南科技大学");
            //查询邮箱是否被注册
            QueryBuilder<UserInfo> userQB = userInfoDao.queryBuilder();
            if(userQB.where(UserInfoDao.Properties.Email.eq(email)).list().size() > 0){
@@ -149,12 +161,98 @@ public class RegisterActivity extends Activity {
                Intent in = new Intent(this, MainActivity.class);
                in.putExtra("email",email);
                startActivity(in);
-           }
+           }*/
+        //检索数据库，确保注册用户信息是唯一的。
+           final String  school = "河南科技大学";
+           final String newName = userName;
+           final String newPass = password;
+           final String newEmail = email;
+           final String newTel = telNumber;
 
-       }catch (Exception e){
-           Log.d("新用户注册","新用户信息插入失败！");
-       }
+        final Thread thread = new Thread(new Runnable() {
+               @Override
+               public void run() {
+                   while(!Thread.interrupted()) {
+                       try{
+                           Thread.sleep(100);
+                       }catch (InterruptedException e) {
+                           Log.e("RegisterUser",e.toString());
+                       }
+                       String ip="192.168.0.110";
+                       int port=3306;
+                       String dbName = "INFO";
+                       String url="jdbc:mysql://"+ip+":"+port+"/"+dbName;
+                       String user="zeng";
+                       String dbpassword="123456";
+
+                       try {
+                           Class.forName("com.mysql.jdbc.Driver");
+                           Connection cn = null;
+                           try {
+                               cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.0.110:3306/INFO","zeng","123456");
+                               Log.d("RegisterUser","数据库连接成功！");
+
+                           } catch (SQLException e) {
+                               Log.d("RegisterUser","数据库连接失败！");
+                           }
+
+                           if (cn!=null) {
+
+                               String sql = "select * from userInfo";
+
+                               Statement st = null;
+                               ResultSet rs = null;
+
+                               try {
+                                st = cn.createStatement();
+                                rs = st.executeQuery(sql);
+                                boolean existed = false;
+                               //当遍历完结果集合，依然找不到相同的记录，则表明用户不存在，可正常加入数据库
+                               while (rs.next()) {
+                                   String userEmail = rs.getString("user_email");
+                                   String username = rs.getString("user_name");
+                                   Log.d("RegisterUser", userEmail + ": " + username);
+                                   if (userEmail.equals(newEmail) || username.equals(newName)) {
+                                       Log.d("RegisterUser", "用户已存在，添加新用户失败！");
+                                       existed = true;
+                                       break;
+                                   }
+                               }
+
+                                   if (!existed) { //将用户插入数据库
+                                       sql = "insert into userInfo (user_name,user_password,user_email,user_phone,user_school) values (newName,newPass,newEmail,newTel,school)";
+                                       st.execute(sql);
+                                    } else
+                                       showToast("邮箱或用户名已被使用，注册失败！", mcontext);
+
+                               } catch (SQLException e) {
+                                   Log.d("RegisterUser","数据库操作失败！");
+                               }
+
+                               try {
+                                   //关闭数据库相关资源
+                                   cn.close();
+                                   st.close();
+                                   rs.close();
+                               } catch (SQLException e) {
+                                   Log.d("RegisterUser", "数据库连接关闭失败！");
+                               }
+
+                               return;
+                           }
+                       } catch (ClassNotFoundException e) {
+                           e.printStackTrace();
+                       }
+
+                   }
+
+               }
+           });
+
+           thread.start();
+
     }
+
     /**
      *初始化数据库
      */

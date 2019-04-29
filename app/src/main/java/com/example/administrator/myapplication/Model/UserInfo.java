@@ -18,11 +18,11 @@ public class UserInfo {
     @Index(unique = true)
     private String email;
     //
-    private long telnumber;
+    private String telnumber;
     private String school;
 
-    @Generated(hash = 291919525)
-    public UserInfo(Long id, String username, String password, String email, long telnumber,
+    @Generated(hash = 635175496)
+    public UserInfo(Long id, String username, String password, String email, String telnumber,
             String school) {
         this.id = id;
         this.username = username;
@@ -58,10 +58,10 @@ public class UserInfo {
     public void setEmail(String email) {
         this.email = email;
     }
-    public long getTelnumber() {
+    public String getTelnumber() {
         return this.telnumber;
     }
-    public void setTelnumber(EditText telnumber) {
+    public void setTelnumber(String telnumber) {
         this.telnumber = telnumber;
     }
     public String getSchool() {

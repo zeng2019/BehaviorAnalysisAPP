@@ -173,23 +173,11 @@ public class LoginActivity extends BaseActivity {
             //如果格式错误，输入框重新获得输入焦点
             focusView.requestFocus();
         } else {
-            // Show a progress spinner, and kick off a background task to
-            // perform the user login attempt.
+
             //如果输入的格式正确，显示验证等待对话框，并启动验证线程
             showProgress(true);
-            //revised by zeng, 20190416,仅仅用于测试
-/*            if (email.equals("123@123.com") && password.equals("12345"))
-            {
-                showToast("登录成功");
-                Intent in = new Intent(LoginActivity.this, MainActivity.class);
-                in.putExtra("email",email);
-                startActivity(in);
-                finish();
-            }
-            else {*/
-                mAuthTask = new UserLoginTask(email, password); //通过JDBC，登录mysql数据库检测
-                mAuthTask.execute((Void) null);
-//            }
+            mAuthTask = new UserLoginTask(email, password); //通过JDBC，登录mysql数据库检测
+            mAuthTask.execute((Void) null);
             ////***********************//////
         }
     }
@@ -271,14 +259,15 @@ public class LoginActivity extends BaseActivity {
             // TODO: attempt authentication against a network service.
 
             boolean loginFlag = false;
+//
+//              try {
+//                // Simulate network access.//模拟用户验证耗时
+//
+//                Thread.sleep(2000);
+//            } catch (InterruptedException e) {
+//                  e.printStackTrace();
+//            }
 
-              try {
-                // Simulate network access.//模拟用户验证耗时
-
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                  e.printStackTrace();
-            }
             //使用数据库登陆
 /*            DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
             userInfoDao = daoSession.getUserInfoDao();
@@ -295,7 +284,7 @@ public class LoginActivity extends BaseActivity {
                 Class.forName("com.mysql.jdbc.Driver");
                 try {
                     Connection cn;
-                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.0.110:3306/INFO","zeng","123456");
+                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.1.200:3306/INFO","zeng","123456");
 
                     String sql="select * from userInfo";
 /*                    PreparedStatement pst = cn.prepareStatement(sql);
@@ -342,7 +331,6 @@ public class LoginActivity extends BaseActivity {
                 Intent in = new Intent(LoginActivity.this, MainActivity.class);
                 in.putExtra("email",mEmail);
                 startActivity(in);
-      //          startActivity(new Intent(LoginActivity.this, MainActivity.class));
                 finish();
             } else {
                 //密码错误，输入框获得焦点，并提示错误

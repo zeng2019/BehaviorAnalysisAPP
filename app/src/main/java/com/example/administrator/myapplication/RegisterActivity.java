@@ -2,6 +2,7 @@ package com.example.administrator.myapplication;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.app.Activity;
 import android.text.TextUtils;
@@ -23,6 +24,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static com.example.administrator.myapplication.DBUserOperator.insertUserInfo;
 import static com.example.administrator.myapplication.DBUserOperator.queryUserInfo;
 
 
@@ -38,6 +40,7 @@ import static com.example.administrator.myapplication.DBUserOperator.queryUserIn
  */
 public class RegisterActivity extends Activity {
 
+    private RegUserAsynTask regUserTask=null;
     private Context mcontext;
     private Button registerButton;
     private EditText nameInput;
@@ -71,7 +74,7 @@ public class RegisterActivity extends Activity {
 
     }
     /**
-     * 尝试注册操作，主要是判断注册信息是否正确。
+     * 注册新用户，首先判断注册信息是否正确，然后调用添加用户函数。
      */
     private void attemptRegister(){
 
@@ -121,17 +124,10 @@ public class RegisterActivity extends Activity {
             user.setEmail(email);
             user.setUsername(userName);
             user.setPassword(password);
-            user.setTelnumber(telephoneInput);
-
-            if(!queryUserInfo(userName,email))
-            {
-                if(addNewUser(user)) {
-                    showToast("用户注册成功！", mcontext);
-                    Intent in = new Intent(this, MainActivity.class);
-                    in.putExtra("email", email);
-                    startActivity(in);
-                }
-            }
+            user.setTelnumber(telNumber);
+            showToast("注册新用户！",mcontext);
+            //直接调用，添加用户信息
+            addNewUser(user);
         }
 
     }
@@ -153,10 +149,68 @@ public class RegisterActivity extends Activity {
     /**
      * 注册操作
      */
-    private boolean addNewUser(UserInfo user) {
-        boolean isDone = false;
+    private void addNewUser(UserInfo user) {
 
-        return isDone;
+        regUserTask = new RegUserAsynTask(user);
+        regUserTask.execute((Void) null);
+    }
+
+    /**
+     * Represents an asynchronous login/registration task used to authenticate
+     * the user.后台用户验证
+     */
+    public class RegUserAsynTask extends AsyncTask<Void, Void, Boolean> {
+
+        UserInfo user;
+        public RegUserAsynTask(UserInfo newUser) {
+//            super();
+            user = newUser;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean isDone = false;
+
+/*            try {
+                 Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }*/
+
+            //登陆mysql，查看用户是否存在，不存在则进行添加操作。
+            if (!queryUserInfo(user.getUsername(),user.getEmail())) //用户不存在于数据库，执行添加操作
+            {
+                if(insertUserInfo(user)) {
+                    isDone = true;
+                }
+            }
+            return isDone;
+        }
+
+        @Override
+        //线程结束后的ui处理
+        protected void onPostExecute(final Boolean isDone) {
+ //           showProgress(false);//隐藏验证延时对话框
+            regUserTask = null;
+
+            if (isDone) {
+                Toast.makeText(RegisterActivity.this,"用户注册成功！",Toast.LENGTH_SHORT).show();
+                //用户活动跳转至登录界面或者主活动界面
+                Intent in = new Intent(RegisterActivity.this, MainActivity.class);
+                in.putExtra("email",user.getEmail());
+                startActivity(in);
+                finish();
+            } else {
+                //密码错误，输入框获得焦点，并提示错误
+                Toast.makeText(RegisterActivity.this,"用户注册失败！",Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        //取消注册
+        @Override
+        protected void onCancelled() {
+            regUserTask = null;
+        }
     }
 
     private void addUserInfo(String userName,String password,String email,String telNumber){

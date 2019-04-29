@@ -94,7 +94,7 @@ public class myApp extends Application {
 
         //以下代码用于增加，删除等操作数据表时使用。
         /**************** begin ********************/
-//        //MigrationHelper.DEBUG = true;  //if you want see the log info,default is false
+        //MigrationHelper.DEBUG = true;  //if you want see the log info,default is false
 //        MySQLiteOpenHelper helper = new MySQLiteOpenHelper(this, "info.db",
 //                null);
 //        daoMaster = new DaoMaster(helper.getWritableDatabase());

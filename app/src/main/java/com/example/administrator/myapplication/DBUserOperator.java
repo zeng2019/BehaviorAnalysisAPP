@@ -17,9 +17,10 @@ public class DBUserOperator {
      * @param
      * @return
      */
-    public static int insertUserInfo(UserInfo user) {
+    public static boolean insertUserInfo(UserInfo user) {
         Connection conn =  getConnection();
-        int i = 0;
+        boolean insertUserDone = false;
+        int i=0;
         String sql = "insert into userInfo (user_name,user_password,user_email) values(?,?,?)";
         PreparedStatement pstmt;
         try {
@@ -34,7 +35,10 @@ public class DBUserOperator {
             Log.d("用户数据库操作：","添加用户失败！");
             e.printStackTrace();
         }
-        return i;
+        if (i>0){
+            insertUserDone = true;
+        }
+        return insertUserDone;
     }
 
     public static int update(UserInfo user) {

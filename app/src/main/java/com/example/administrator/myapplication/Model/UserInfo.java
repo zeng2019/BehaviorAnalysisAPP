@@ -1,5 +1,7 @@
 package com.example.administrator.myapplication.Model;
 
+import android.widget.EditText;
+
 import org.greenrobot.greendao.annotation.Entity;
 import org.greenrobot.greendao.annotation.Generated;
 import org.greenrobot.greendao.annotation.Id;
@@ -59,7 +61,7 @@ public class UserInfo {
     public long getTelnumber() {
         return this.telnumber;
     }
-    public void setTelnumber(long telnumber) {
+    public void setTelnumber(EditText telnumber) {
         this.telnumber = telnumber;
     }
     public String getSchool() {

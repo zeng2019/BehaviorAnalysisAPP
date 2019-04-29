@@ -23,6 +23,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import static com.example.administrator.myapplication.DBUserOperator.queryUserInfo;
+
 
 /**
  * 名称    ：RegisterActivity
@@ -114,14 +116,22 @@ public class RegisterActivity extends Activity {
         if(cancel){
             focusView.requestFocus();
         }else {
-            //信息无误后开始注册操作
-            addUserInfo(userName,password,email,telNumber);
-//             {
-//                    showToast("用户注册成功！", mcontext);
-//                    Intent in = new Intent(this, MainActivity.class);
-//                    in.putExtra("email", email);
-//                    startActivity(in);
-//            }
+            //构造userInfo对象
+            UserInfo user = new UserInfo();
+            user.setEmail(email);
+            user.setUsername(userName);
+            user.setPassword(password);
+            user.setTelnumber(telephoneInput);
+
+            if(!queryUserInfo(userName,email))
+            {
+                if(addNewUser(user)) {
+                    showToast("用户注册成功！", mcontext);
+                    Intent in = new Intent(this, MainActivity.class);
+                    in.putExtra("email", email);
+                    startActivity(in);
+                }
+            }
         }
 
     }
@@ -139,9 +149,16 @@ public class RegisterActivity extends Activity {
         return password.length()>4;
     }
     private boolean isTelnumberValid(long telNumber){ return true;}
+
     /**
      * 注册操作
      */
+    private boolean addNewUser(UserInfo user) {
+        boolean isDone = false;
+
+        return isDone;
+    }
+
     private void addUserInfo(String userName,String password,String email,String telNumber){
 
 //           long tel = Long.parseLong(telNumber);
@@ -252,6 +269,7 @@ public class RegisterActivity extends Activity {
            thread.start();
 
     }
+
 
     /**
      *初始化数据库

@@ -180,6 +180,8 @@ public class RegisterActivity extends Activity {
             //登陆mysql，查看用户是否存在，不存在则进行添加操作。
             if (!queryUserInfo(user.getUsername(),user.getEmail())) //用户不存在于数据库，执行添加操作
             {
+                Log.d("RegisterActivity","查询了用户不存在！");
+
                 if(insertUserInfo(user)) {
                     isDone = true;
                 }
@@ -202,7 +204,8 @@ public class RegisterActivity extends Activity {
                 finish();
             } else {
                 //密码错误，输入框获得焦点，并提示错误
-                Toast.makeText(RegisterActivity.this,"用户注册失败！",Toast.LENGTH_SHORT).show();
+                nameInput.requestFocus();
+                Toast.makeText(RegisterActivity.this,"用户已存在，注册失败！",Toast.LENGTH_SHORT).show();
             }
         }
 

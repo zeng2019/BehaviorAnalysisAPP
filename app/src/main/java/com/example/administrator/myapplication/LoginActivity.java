@@ -335,7 +335,7 @@ public class LoginActivity extends BaseActivity {
             } else {
                 //密码错误，输入框获得焦点，并提示错误
                 mPasswordView.setError(getString(R.string.error_incorrect_password));
-                mPasswordView.requestFocus();
+                mEmailView.requestFocus();
             }
         }
 

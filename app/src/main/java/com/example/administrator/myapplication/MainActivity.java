@@ -7,6 +7,7 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -33,6 +34,7 @@ import android.widget.Toast;
 
 import com.example.administrator.myapplication.BaseAcivity.BaseActivity;
 import com.example.administrator.myapplication.Model.CheckinInfo;
+import com.example.administrator.myapplication.Model.UserInfo;
 import com.example.administrator.myapplication.Model.nodeInfo;
 import com.example.administrator.myapplication.UI.upImage;
 import com.example.administrator.myapplication.greendao.CheckinInfoDao;
@@ -56,6 +58,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 
+import static com.example.administrator.myapplication.DBNodeOperator.insertNodeInfo;
+import static com.example.administrator.myapplication.DBNodeOperator.queryNodeInfo;
+import static com.example.administrator.myapplication.DBTimeOperator.insertTimeInfo;
+import static com.example.administrator.myapplication.DBUserOperator.insertUserInfo;
+import static com.example.administrator.myapplication.DBUserOperator.queryUserInfo;
+
 /**
  * 名称     ：MainActivity
  * 主要内容 ：主页
@@ -67,6 +75,9 @@ public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private Handler mHandler;
+    private nodeInitialAsynTask nodeInitTask=null; //用于位置锚点数据库初始化
+    private recTimeAsynTask recTimeTask = null; //用于记录时间
+
     //确认退出的标志值
     private static boolean isExit = false;
     //
@@ -123,7 +134,7 @@ public class MainActivity extends BaseActivity
      */
     private void init() {
         initView(); //界面元素变量定义
-        initNodeInfo(); //初始化nodeInfo数据库
+//        initNodeInfo(); //初始化nodeInfo数据库
         initCtrl();
         initHander();
 //        initUserInfo();
@@ -137,7 +148,7 @@ public class MainActivity extends BaseActivity
         Log.d("MainActivity", "in initNodeInfo");
             //图书馆位置
             nodeInfo nodeinfo = new nodeInfo();
-            nodeinfo.setNodeID("0x77BBCB73"); //Major + minor
+            nodeinfo.setNodeID("77BBCB73"); //Major + minor
             nodeinfo.setNodeSN("0117C5976A3E"); //SN
             nodeinfo.setNodeName("00001");
             nodeinfo.setPosition("图书馆");
@@ -145,35 +156,81 @@ public class MainActivity extends BaseActivity
             nodeinfo.setLongitude(112.42);
             nodeinfo.setDescription("图书馆锚点");
             //查找是否已存在相同记录，不存在插入数据库
-            ((myApp) (getApplication())).getDaoSession().insert(nodeinfo);
+        nodeInitTask = new nodeInitialAsynTask(nodeinfo);
+        nodeInitTask.execute((Void) null);
+
 
             //工科教学楼
             nodeInfo nodeinfo2 = new nodeInfo();
-            nodeinfo2.setNodeID("0x8E336A86"); //Major + minor
+            nodeinfo2.setNodeID("8E336A86"); //Major + minor
             nodeinfo2.setNodeSN("0117C597055B"); //SN
             nodeinfo2.setNodeName("00002");
             nodeinfo2.setPosition("工科教学楼");
             nodeinfo2.setLatitude(34.61);
             nodeinfo2.setLongitude(112.43);
             nodeinfo2.setDescription("工科教学楼锚点");
-            ((myApp) (getApplication())).getDaoSession().insert(nodeinfo2);
+  //          ((myApp) (getApplication())).getDaoSession().insert(nodeinfo2);
+        nodeInitTask = new nodeInitialAsynTask(nodeinfo2);
+        nodeInitTask.execute((Void) null);
 
             //宿舍楼
             nodeInfo nodeinfo3 = new nodeInfo();
-            nodeinfo3.setNodeID("0xCE5CF997"); //Major + minor
+            nodeinfo3.setNodeID("CE5CF997"); //Major + minor
             nodeinfo3.setNodeSN("0117C5976771"); //SN
-            nodeinfo3.setNodeName("00002");
+            nodeinfo3.setNodeName("00003");
             nodeinfo3.setPosition("宿舍楼");
             nodeinfo3.setLatitude(34.61);
-            nodeinfo3.setLongitude(112.43);
+            nodeinfo3.setLongitude(112.45);
             nodeinfo3.setDescription("宿舍楼锚点");
-             ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
+//             ((myApp) (getApplication())).getDaoSession().insert(nodeinfo3);
+        nodeInitTask = new nodeInitialAsynTask(nodeinfo3);
+        nodeInitTask.execute((Void) null);
 
-        List<nodeInfo> nodeList = queryAll();
-        for(int i=0; i<nodeList.size(); i++) {
-            Log.d("MainActivity","已有位置锚点："+nodeList.get(i).getNodeSN()+": "+ nodeList.get(i).getPosition());
+//        List<nodeInfo> nodeList = queryAll();
+//        for(int i=0; i<nodeList.size(); i++) {
+//            Log.d("MainActivity","已有位置锚点："+nodeList.get(i).getNodeSN()+": "+ nodeList.get(i).getPosition());
+//        }
+
+    }
+
+    public class nodeInitialAsynTask extends AsyncTask<Void, Void, Boolean> {
+
+        nodeInfo node;
+        public nodeInitialAsynTask(nodeInfo newNode) {
+            super();
+            node = newNode;
         }
 
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean isDone = false;
+
+            //登陆mysql，查看用户是否存在，不存在则进行添加操作。
+            if (!queryNodeInfo(node.getNodeSN())) //用户不存在于数据库，执行添加操作
+            {
+                Log.d("MainActivity","位置锚点信息不存在！");
+
+                if(insertNodeInfo(node)) {
+                    isDone = true;
+                }
+            }
+            return isDone;
+        }
+
+        @Override
+        //线程结束后的ui处理
+        protected void onPostExecute(final Boolean isDone) {
+            //           showProgress(false);//隐藏验证延时对话框
+            nodeInitTask = null;
+
+            if (isDone) {
+                Toast.makeText(MainActivity.this,"位置锚点信息添加成功！",Toast.LENGTH_SHORT).show();
+                //用户活动跳转至登录界面或者主活动界面
+                finish();
+            } else {
+                Toast.makeText(MainActivity.this,"位置锚点已存在，无需添加！",Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
 
@@ -331,18 +388,26 @@ public class MainActivity extends BaseActivity
                     Log.d("MainActivity", "获取到位置锚点:"+sn);
                     //写用户（基于email检索）时间记录信息：位置锚点的 sn 和 id，时间等
                     recordTimeInfo(sn, id, true);
+                    //处理时间
+                    long ctime = System.currentTimeMillis();
+                    Date date = new Date(ctime);
+                    SimpleDateFormat stime = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
+                    final String recTime = stime.format(date);
 
-//                writeText(sn);
+                    CheckinInfo time = new CheckinInfo();
+                    time.setEmail(email);
+                    time.setIbeacn_sn(sn);
+                    time.setTime(date);
+                    saveTimeInfo(time);
+
                     //以下用于在view显示位置信息
                     nodeInfo node = new nodeInfo();
                     node = queryBySN(sn);
+
                     final String nodePos = node.getPosition();
                     final String longitude = node.getLongitude().toString();
                     final String latitude = node.getLatitude().toString();
-                    long time = System.currentTimeMillis();
-                    Date date = new Date(time);
-                    SimpleDateFormat stime = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
-                    final String recTime = stime.format(date);
+
                     //处理最近5条时间记录
                     List<CheckinInfo> checkInList = queryCheckInfoByEmail(email);
                     int numberOfRec = checkInList.size();
@@ -408,6 +473,51 @@ public class MainActivity extends BaseActivity
         };
     }
 
+    private void saveTimeInfo(CheckinInfo time) {
+
+        recTimeTask = new recTimeAsynTask(time);
+        recTimeTask.execute((Void) null);
+
+    }
+
+
+    public class recTimeAsynTask extends AsyncTask<Void, Void, Boolean> {
+
+        CheckinInfo time;
+        public recTimeAsynTask(CheckinInfo newTime) {
+            super();
+            time = newTime;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean isDone = false;
+
+            //将时间记录插入时间记录表。
+            Log.d("MainActivity","插入用户时间记录信息！");
+            if(insertTimeInfo(time)) {
+                isDone = true;
+            }
+
+            return isDone;
+        }
+
+        @Override
+        //线程结束后的ui处理
+        protected void onPostExecute(final Boolean isDone) {
+            //           showProgress(false);//隐藏验证延时对话框
+            recTimeTask = null;
+
+            if (isDone) {
+                Toast.makeText(MainActivity.this,"用户时间记录添加成功！",Toast.LENGTH_SHORT).show();
+                //用户活动跳转至登录界面或者主活动界面
+                finish();
+            } else {
+                Toast.makeText(MainActivity.this,"用户时间记录添加失败！",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
     //get key
     public String getKey(Beacon beacon) {
         if (beacon == null) {
@@ -428,40 +538,6 @@ public class MainActivity extends BaseActivity
         return simpleDateFormat.format(date);
         // lv_id.setText("Date获得当前日期"+time);
 
-    }
-
-    /**
-     * 将扫描到的信息写到text文本中
-     */
-
-    private void writeText(String str) {
-
-        FileUtils fileHelper1 = new FileUtils(mContext);
-        String filename = "log.txt";
-        String fileDetail = "sn:" + str + " " + writeTime() + "\n";
-        try {
-            fileHelper1.writeText(filename, fileDetail);
-            Toast.makeText(mContext, "数据写入成功", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(mContext, "数据写入失败", Toast.LENGTH_SHORT).show();
-        }
-        //return fileDetail;
-    }
-
-    /*
-     *讲储存的文本读取出来
-     */
-    private String readText() {
-        String detail = "";
-        FileUtils fileHelper2 = new FileUtils(mContext);
-        try {
-            String filename = "1.txt";
-            detail = fileHelper2.readText(filename);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return detail;
     }
 
     /*
@@ -613,6 +689,7 @@ public class MainActivity extends BaseActivity
         drawer.closeDrawer(GravityCompat.START); //将滑动菜单关闭
         return true;
     }
+
 
     /*
      * ****************** 数据库操作部分 ****************************

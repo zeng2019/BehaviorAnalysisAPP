@@ -31,6 +31,7 @@ public class DBUserOperator {
             i = pstmt.executeUpdate();
             pstmt.close();
             conn.close();
+            Log.d("用户数据库操作：","添加用户成功！");
         } catch (SQLException e) {
             Log.d("用户数据库操作：","添加用户失败！");
             e.printStackTrace();
@@ -67,8 +68,10 @@ public class DBUserOperator {
         try {
             pstmt = (PreparedStatement)conn.prepareStatement(sql);
             ResultSet rs = pstmt.executeQuery();
-            if(rs.wasNull()) {
+            Log.d("用户数据库操作：","用户查询执行完毕！");
+            if(rs.next()==false) {
                 isExisted = false; //表示用户不存在，可以新加
+                Log.d("用户数据库操作：","用户不存在,可添加！");
             }
         } catch (SQLException e) {
             e.printStackTrace();

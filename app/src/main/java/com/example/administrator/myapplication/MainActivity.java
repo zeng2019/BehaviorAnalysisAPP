@@ -48,6 +48,8 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -206,13 +208,18 @@ public class MainActivity extends BaseActivity
             boolean isDone = false;
 
             //登陆mysql，查看用户是否存在，不存在则进行添加操作。
-            if (!queryNodeInfo(node.getNodeSN())) //用户不存在于数据库，执行添加操作
-            {
-                Log.d("MainActivity","位置锚点信息不存在！");
+            ResultSet rs = queryNodeInfo(node.getNodeSN());
+            try {
+                if (!rs.next()) //用户不存在于数据库，执行添加操作
+                {
+                    Log.d("MainActivity","位置锚点信息不存在！");
 
-                if(insertNodeInfo(node)) {
-                    isDone = true;
+                    if(insertNodeInfo(node)) {
+                        isDone = true;
+                    }
                 }
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
             return isDone;
         }
@@ -382,6 +389,10 @@ public class MainActivity extends BaseActivity
                 final String sn = beacon.getSerialNumber();
                 final String id = beacon.getMajor().toString() + beacon.getMinor().toString();
                 final String mes_local = "发现位置锚点:" + sn;
+                String nodePos = "";
+                double longitude = 0;
+                double latitude = 0;
+                int userID = 0;
 
                 //查询nodeInfo数据表，找到位置锚点相关信息
                 if (!sn.isEmpty()) {
@@ -398,18 +409,26 @@ public class MainActivity extends BaseActivity
                     time.setEmail(email);
                     time.setIbeacn_sn(sn);
                     time.setTime(date);
+                    //调用时间记录处理函数
                     saveTimeInfo(time);
 
                     //以下用于在view显示位置信息
                     nodeInfo node = new nodeInfo();
-                    node = queryBySN(sn);
-
-                    final String nodePos = node.getPosition();
-                    final String longitude = node.getLongitude().toString();
-                    final String latitude = node.getLatitude().toString();
-
-                    //处理最近5条时间记录
-                    List<CheckinInfo> checkInList = queryCheckInfoByEmail(email);
+                    //建立异步任务，检索位置锚点信息
+                    ResultSet rs = null;
+                    rs = queryNodeInfo(sn);
+                    try {
+                        if(!rs.next()) {
+                            nodePos = rs.getString("nodePosition");
+                            longitude = rs.getDouble("nodeLongitude");
+                            latitude = rs.getDouble("nodeLatitude");
+                            userID = rs.getInt("nodeName");
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    //检索最近五条时间内记录并显示
+    /*                List<CheckinInfo> checkInList = queryCheckInfoByEmail(email);
                     int numberOfRec = checkInList.size();
                     int number = 0;
                     if (numberOfRec > 5) {
@@ -428,8 +447,9 @@ public class MainActivity extends BaseActivity
                     }
 
                     for (int i=0;i<checkInfo.length;i++)
-                        Log.d("MainActivity","最近记录："+checkInfo[i]);
-                    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.listview_item,checkInfo);
+                        Log.d("MainActivity","最近记录："+checkInfo[i]);*/
+
+//                    final ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainActivity.this,R.layout.listview_item,checkInfo);
 
                     runOnUiThread(new Runnable() {
                         @Override
@@ -441,7 +461,7 @@ public class MainActivity extends BaseActivity
                             tv_longitude.setText(longitude);
                             tv_latitude.setText(latitude);
                             tv_time.setText(recTime);
-                            tv_pos_list.setAdapter(adapter);
+//                            tv_pos_list.setAdapter(adapter);
                             sensoroManager.stopService();
                         }
                     });
@@ -485,7 +505,7 @@ public class MainActivity extends BaseActivity
 
         CheckinInfo time;
         public recTimeAsynTask(CheckinInfo newTime) {
-            super();
+//            super();
             time = newTime;
         }
 

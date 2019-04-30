@@ -64,19 +64,19 @@ public class DBNodeOperator {
         return i;
     }
 
-    public static boolean queryNodeInfo(String nodeSN) {
+    public static ResultSet queryNodeInfo(String nodeSN) {
         Connection conn = getConnection();
         String sql = "select * from nodeInfo where nodeSN='" +nodeSN+"'";
         PreparedStatement pstmt = null;
-        boolean isExisted = true;
+        ResultSet rs=null;
         try {
             pstmt = (PreparedStatement)conn.prepareStatement(sql);
-            ResultSet rs = pstmt.executeQuery();
+            rs = pstmt.executeQuery();
             Log.d("位置锚点数据库操作：","位置锚点信息查询执行完毕！");
-            if(rs.next()==false) {
+/*            if(rs.next()==false) {
                 isExisted = false; //表示用户不存在，可以新加
                 Log.d("位置锚点数据库操作：","位置锚点不存在,可添加入库！");
-            }
+            }*/
         } catch (SQLException e) {
             e.printStackTrace();
             Log.d("位置锚点数据库操作：","查询位置锚点信息！");
@@ -92,6 +92,6 @@ public class DBNodeOperator {
             e.printStackTrace();
         }
 
-        return isExisted;
+        return rs;
     }
 }

@@ -64,7 +64,10 @@ public class DBNodeOperator {
         return i;
     }
 
-    public static ResultSet queryNodeInfo(String nodeSN) {
+    public static nodeInfo queryNodeInfo(String nodeSN) {
+
+        nodeInfo node = null;
+
         Connection conn = getConnection();
         String sql = "select * from nodeInfo where nodeSN='" +nodeSN+"'";
         PreparedStatement pstmt = null;
@@ -72,14 +75,19 @@ public class DBNodeOperator {
         try {
             pstmt = (PreparedStatement)conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-            Log.d("位置锚点数据库操作：","位置锚点信息查询执行完毕！");
-/*            if(rs.next()==false) {
-                isExisted = false; //表示用户不存在，可以新加
-                Log.d("位置锚点数据库操作：","位置锚点不存在,可添加入库！");
-            }*/
+            rs.last();
+            //构造一个node，并返回
+            node.setNodeID(rs.getString("nodeID"));
+            node.setNodeSN(rs.getString("nodeSN"));
+            node.setNodeName(rs.getString("nodeName"));
+            node.setLongitude(rs.getDouble("nodeLongitude"));
+            node.setLatitude(rs.getDouble("nodeLatitude"));
+            node.setPosition(rs.getString("nodePosition"));
+            node.setDescription(rs.getString("nodeDescription"));
+            Log.d("位置锚点数据库操作：","位置锚点信息查询：SN："+rs.getString("nodeSN"));
         } catch (SQLException e) {
             e.printStackTrace();
-            Log.d("位置锚点数据库操作：","查询位置锚点信息！");
+            Log.d("位置锚点数据库操作：","查询位置锚点信息出错！");
         }
 
         try{
@@ -92,6 +100,6 @@ public class DBNodeOperator {
             e.printStackTrace();
         }
 
-        return rs;
+        return node;
     }
 }

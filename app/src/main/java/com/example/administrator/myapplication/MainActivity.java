@@ -202,10 +202,9 @@ public class MainActivity extends BaseActivity
         protected Boolean doInBackground(Void... params) {
             boolean isDone = false;
 
-            //登陆mysql，查看用户是否存在，不存在则进行添加操作。
-            ResultSet rs = queryNodeInfo(node.getNodeSN());
-            try {
-                if (!rs.next()) //用户不存在于数据库，执行添加操作
+            //登陆mysql，查看位置锚点是否存在，不存在则进行添加操作。
+            nodeInfo resultNode = queryNodeInfo(node.getNodeSN());
+                if (resultNode == null) //位置锚点不存在于数据库，执行添加操作
                 {
                     Log.d("MainActivity","位置锚点信息不存在！");
 
@@ -213,9 +212,6 @@ public class MainActivity extends BaseActivity
                         isDone = true;
                     }
                 }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
             return isDone;
         }
 
@@ -399,13 +395,10 @@ public class MainActivity extends BaseActivity
                     ((myApp)getApplication()).checkinState = true; //设置为true，表示已经找到位置锚点且记录过时间信息。
 
                     //根据位置锚点的 SN，开启异步任务，检索nodeInfo，找到对应的信息，然后显示到view上。
-                    final String nodePos;
-                    final Double longitude;
-                    final Double latitude;
                     getNodeInfoTask = new getNodeInfoAsynTask(sn);
                     getNodeInfoTask.execute((Void) null);
 
-                    sensoroManager.stopService();
+                    sensoroManager.stopService(); //停止位置锚点扫描服务
                 }
             }
 
@@ -433,11 +426,11 @@ public class MainActivity extends BaseActivity
     private class getNodeInfoAsynTask extends AsyncTask<Void, Void, Boolean>{
 
         String sn;
-        ResultSet rs = null;
-        double longitude = 0.0;
+        nodeInfo node;
+/*        double longitude = 0.0;
         double latitude = 0.0;
         String position;
-        String nodeID;
+        String nodeID;*/
         public getNodeInfoAsynTask(String newsn) {
             sn = newsn;
         }
@@ -446,22 +439,9 @@ public class MainActivity extends BaseActivity
         protected Boolean doInBackground(Void... params) {
             boolean isDone = false;
 
-            //将时间记录插入时间记录表。
+            //获取位置锚点信息！
             Log.d("MainActivity","检索位置锚点信息！");
-
-            rs = queryNodeInfo(sn);
-            try {
-                if(rs.next())
-                {
-                    longitude = rs.getDouble("nodeLongitude");
-                    latitude = rs.getDouble("nodeLatitude");
-                    position = rs.getString("nodePosition");
-                    nodeID = rs.getString("nodeID");
-                    isDone = true;
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
+            node = queryNodeInfo(sn);
 
             return isDone;
         }
@@ -476,10 +456,10 @@ public class MainActivity extends BaseActivity
                 Toast.makeText(MainActivity.this,"位置锚点信息检索成功！",Toast.LENGTH_SHORT).show();
                 //将位置锚点信息显示在view页面
                     tv_sn_info.setText(sn);
-                    tv_id_info.setText(nodeID);
-                    tv_pos_des.setText(position);
-                    tv_longitude.setText((int) longitude);
-                    tv_latitude.setText((int) latitude);
+                    tv_id_info.setText(node.getNodeID());
+                    tv_pos_des.setText(node.getPosition());
+                    tv_longitude.setText(node.getLongitude().toString());
+                    tv_latitude.setText(node.getLatitude().toString());
                 long ctime = System.currentTimeMillis();
                 Date date = new Date(ctime);
                 SimpleDateFormat stime = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");

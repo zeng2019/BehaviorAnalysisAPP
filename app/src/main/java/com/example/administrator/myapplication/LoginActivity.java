@@ -327,7 +327,7 @@ public class LoginActivity extends BaseActivity {
             showProgress(false);//隐藏验证延时对话框
 
             if (success) {
-                showToast("登录成功！");
+//                showToast("登录成功！");
                 Intent in = new Intent(LoginActivity.this, MainActivity.class);
                 in.putExtra("email",mEmail);
                 startActivity(in);

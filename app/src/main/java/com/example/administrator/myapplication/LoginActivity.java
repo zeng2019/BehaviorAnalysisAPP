@@ -45,6 +45,8 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static com.example.administrator.myapplication.DbOperator.getConnection;
+
 /**
  *
  * 名称：LoginActivity
@@ -284,7 +286,8 @@ public class LoginActivity extends BaseActivity {
                 Class.forName("com.mysql.jdbc.Driver");
                 try {
                     Connection cn;
-                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.1.200:3306/INFO","zeng","123456");
+//                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.1.200:3306/INFO","zeng","123456");
+                    cn = (Connection) getConnection();
 
                     String sql="select * from userInfo";
 /*                    PreparedStatement pst = cn.prepareStatement(sql);
@@ -296,7 +299,7 @@ public class LoginActivity extends BaseActivity {
                         String userPass = rs.getString("user_password");
                         String userName = rs.getString("user_name");
                         if (userEmail.equals(mEmail) && userPass.equals(mPassword)) {
-                            showToast("欢迎用户："+userName+" 登陆系统！");
+                            showToast("欢迎："+userName+" 登陆时间管理系统！");
                             loginFlag = true;
                         }
                         if(loginFlag)

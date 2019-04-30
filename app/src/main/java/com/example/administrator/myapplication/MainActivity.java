@@ -44,6 +44,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -131,7 +132,7 @@ public class MainActivity extends BaseActivity
      */
     private void init() {
         initView(); //界面元素变量定义
-//        initNodeInfo(); //初始化nodeInfo数据库
+        initNodeInfo(); //初始化nodeInfo数据库
         initCtrl();
         initHander();
 //        initUserInfo();
@@ -222,12 +223,12 @@ public class MainActivity extends BaseActivity
             nodeInitTask = null;
 
             if (isDone) {
-                Toast.makeText(MainActivity.this,"位置锚点信息添加成功！",Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this,"新位置锚点信息添加成功！",Toast.LENGTH_SHORT).show();
                 //用户活动跳转至登录界面或者主活动界面
                 finish();
-            } else {
+            } /*else {
                 Toast.makeText(MainActivity.this,"位置锚点已存在，无需添加！",Toast.LENGTH_SHORT).show();
-            }
+            }*/
         }
     }
 
@@ -442,7 +443,8 @@ public class MainActivity extends BaseActivity
             //获取位置锚点信息！
             Log.d("MainActivity","检索位置锚点信息！");
             node = queryNodeInfo(sn);
-
+            if(node.getNodeSN().equals(sn))
+                isDone = true;
             return isDone;
         }
 
@@ -453,7 +455,7 @@ public class MainActivity extends BaseActivity
             recTimeTask = null;
 
             if (isDone) {
-                Toast.makeText(MainActivity.this,"位置锚点信息检索成功！",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this,"位置锚点信息检索成功！",Toast.LENGTH_SHORT).show();
                 //将位置锚点信息显示在view页面
                     tv_sn_info.setText(sn);
                     tv_id_info.setText(node.getNodeID());
@@ -466,7 +468,8 @@ public class MainActivity extends BaseActivity
                 final String recTime = stime.format(date);
                 tv_time.setText(recTime);
             } else {
-                Toast.makeText(MainActivity.this,"位置锚点信息检索失败！",Toast.LENGTH_SHORT).show();
+//                Toast.makeText(MainActivity.this,"位置锚点信息检索失败！",Toast.LENGTH_SHORT).show();
+                Log.d("MainActivity","位置锚点信息检索失败！");
             }
         }
 

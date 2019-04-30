@@ -66,7 +66,7 @@ public class DBNodeOperator {
 
     public static nodeInfo queryNodeInfo(String nodeSN) {
 
-        nodeInfo node = null;
+        nodeInfo node = new nodeInfo();
 
         Connection conn = getConnection();
         String sql = "select * from nodeInfo where nodeSN='" +nodeSN+"'";
@@ -75,16 +75,17 @@ public class DBNodeOperator {
         try {
             pstmt = (PreparedStatement)conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-            rs.last();
-            //构造一个node，并返回
-            node.setNodeID(rs.getString("nodeID"));
-            node.setNodeSN(rs.getString("nodeSN"));
-            node.setNodeName(rs.getString("nodeName"));
-            node.setLongitude(rs.getDouble("nodeLongitude"));
-            node.setLatitude(rs.getDouble("nodeLatitude"));
-            node.setPosition(rs.getString("nodePosition"));
-            node.setDescription(rs.getString("nodeDescription"));
-            Log.d("位置锚点数据库操作：","位置锚点信息查询：SN："+rs.getString("nodeSN"));
+            //构造一个node，并返回它
+            while(rs.next()) {
+                node.setNodeID(rs.getString("nodeID"));
+                node.setNodeSN(rs.getString("nodeSN"));
+                node.setNodeName(rs.getString("nodeName"));
+                node.setLongitude(rs.getDouble("nodeLongitude"));
+                node.setLatitude(rs.getDouble("nodeLatitude"));
+                node.setPosition(rs.getString("nodePosition"));
+                node.setDescription(rs.getString("nodeDescription"));
+                Log.d("位置锚点数据库操作：","位置锚点信息查询：SN："+rs.getString("nodeSN"));
+            }
         } catch (SQLException e) {
             e.printStackTrace();
             Log.d("位置锚点数据库操作：","查询位置锚点信息出错！");

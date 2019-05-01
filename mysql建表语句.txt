@@ -1,1 +1,0 @@
-create DATABASE INFO use INFO CREATE TABLE userInfo( user_id INT NOT NULL AUTO_INCREMENT, user_name VARCHAR(100) NOT NULL, user_password VARCHAR(20) NOT NULL, user_email VARCHAR(100) NOT NULL, user_school VARCHAR(200), user_signature VARCHAR(200), user_phone VARCHAR(50), PRIMARY KEY ('id') )ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -1,4 +1,4 @@
-package com.example.administrator.myapplication.greendao;
+package com.example.administrator.timeRecording.greendao;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteStatement;

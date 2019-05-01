@@ -3,7 +3,7 @@ apply plugin: 'org.greenrobot.greendao'
 android {
     compileSdkVersion 27
     defaultConfig {
-        applicationId "com.example.administrator.myapplication"
+        applicationId "com.example.administrator.timeRecording"
         minSdkVersion 21
         targetSdkVersion 27
         versionCode 1

@@ -39,7 +39,7 @@ public class personInfoRevise extends BaseActivity {
         Intent in = getIntent();
         email = in.getStringExtra("email"); //从Intent中取得登录用户的email信息，用于检索userInfo表，获取用户信息
         Log.d("personInfoRevise","当前登录用户："+email);
-        //查询用户信息，并输出至相应界面
+        //开启用户信息查询异步任务，查到结果后，显示在相应字段
         UserInfo user = queryUserByEmail(email);
         tv_name.setText(user.getUsername());
         tv_tel.setText(String.valueOf(user.getTelnumber()));

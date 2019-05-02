@@ -51,4 +51,5 @@ dependencies {
     implementation 'org.greenrobot:greendao:3.2.2'
     implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
     implementation files('libs/mysql-connector-java-5.1.47.jar')
+    implementation files('libs/BaiduLBS_Android.jar')
 }

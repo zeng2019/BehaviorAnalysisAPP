@@ -51,5 +51,5 @@ dependencies {
     implementation 'com.github.yuweiguocn:GreenDaoUpgradeHelper:v2.1.0'
     implementation files('libs/mysql-connector-java-5.1.47.jar')
     implementation files('libs/BaiduLBS_Android.jar')
-    implementation 'com.carson_ho:SearchLayout:1.0.1'
+    api 'com.carson_ho:SearchLayout:1.0.1'
 }

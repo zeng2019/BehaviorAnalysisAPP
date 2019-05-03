@@ -4,14 +4,16 @@ import android.util.Log;
 
 import com.example.administrator.timeRecording.Model.CheckinInfo;
 import com.mysql.jdbc.PreparedStatement;
-import com.mysql.jdbc.util.ResultSetUtil;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static com.example.administrator.timeRecording.DbOperator.getConnection;
 
@@ -67,7 +69,8 @@ public class DBTimeOperator {
         return i;
     }
 
-    public static ResultSet queryTimeInfo(String email) {
+    public static List<Map<String, Object>> queryTimeInfo(String email) {
+        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
         Connection conn = getConnection();
         String sql = "select * from timeInfo where recEmail='" + email + "'";
         PreparedStatement pstmt = null;
@@ -75,11 +78,31 @@ public class DBTimeOperator {
         try {
             pstmt = (PreparedStatement) conn.prepareStatement(sql);
             rs = pstmt.executeQuery();
-            Log.d("时间记录数据库操作：", "时间记录信息查询执行完毕！");
+            Log.d("时间记录数据库操作：", "时间记录检索完毕！");
         } catch (SQLException e) {
             e.printStackTrace();
-            Log.d("时间记录数据库操作：", "查询时间记录信息出错！");
+            Log.d("时间记录数据库操作：", "时间记录检索出错！");
         }
+
+
+        try {
+            ResultSetMetaData md = rs.getMetaData();
+            int columnCount = md.getColumnCount();
+            Log.d("时间分析操作：", "查询时间记录成功！");
+            while (rs.next()) //获得时间记录列表，构造字符串数组
+            {
+                Map<String,Object> rowData = new HashMap<String, Object>();
+                for(int i=1;i<=columnCount;i++) {
+                    rowData.put(md.getColumnName(i),rs.getObject(i));
+                }
+                list.add(rowData);
+
+            }
+        } catch (SQLException e) {
+            Log.d("时间分析操作:","查询时间记录信息出错！");
+            e.printStackTrace();
+        }
+
 
         try {
             if (conn != null)
@@ -90,7 +113,7 @@ public class DBTimeOperator {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return rs;
+        return list;
     }
 
 }

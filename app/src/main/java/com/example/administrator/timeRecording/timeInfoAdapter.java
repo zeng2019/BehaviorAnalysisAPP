@@ -53,12 +53,23 @@ public class timeInfoAdapter extends RecyclerView.Adapter<timeInfoAdapter.ViewHo
         String recLogitude;
         String recLatitude;
         String timeInfo;
+        String posName;
         recUser = mTimeRecList.get(position).get("recEmail").toString();
-//        recTime = mTimeRecList.get(position).get("recTime").toString();
+        recTime = mTimeRecList.get(position).get("recTime").toString();
         recSN = mTimeRecList.get(position).get("recNodeSN").toString();
 //        recLatitude = mTimeRecList.get(position).get("recLatitude").toString();
 //        recLogitude = mTimeRecList.get(position).get("recLogitude").toString();
-        timeInfo = recUser + "    "+recSN;
+//        根据SN，检索nodeInfo数据表，取得位置信息
+        if(recSN.equals("0117C5976A3E"))
+            posName = "图书馆";
+        else if (recSN.equals("0117C597055B"))
+            posName = "工科教学楼";
+        else if (recSN.equals("0117C5976771"))
+            posName = "宿舍楼";
+        else
+            posName = "未知位置！";
+
+        timeInfo =position + ":    " + recTime + "    "+posName;
         holder.timeRecord.setText(timeInfo);
 
     }

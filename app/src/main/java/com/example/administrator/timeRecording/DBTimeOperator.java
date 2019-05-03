@@ -69,10 +69,10 @@ public class DBTimeOperator {
         return i;
     }
 
-    public static List<Map<String, Object>> queryTimeInfo(String email) {
+    public static List<Map<String, Object>> queryTimeInfo(String condition) {
         List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
         Connection conn = getConnection();
-        String sql = "select * from timeInfo where recEmail='" + email + "'";
+        String sql = "select * from timeInfo where recEmail='" + condition + "'" + "or recNodeSN='"+condition+"'";
         PreparedStatement pstmt = null;
         ResultSet rs = null;
         try {

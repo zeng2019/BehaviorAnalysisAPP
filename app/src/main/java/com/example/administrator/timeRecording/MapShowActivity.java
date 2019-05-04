@@ -3,13 +3,17 @@ package com.example.administrator.timeRecording;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
 
+import com.example.administrator.ShowinBDMap;
 import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
 import com.example.administrator.timeRecording.Model.nodeInfo;
 import com.mysql.jdbc.PreparedStatement;
@@ -42,6 +46,7 @@ public class MapShowActivity extends BaseActivity {
     private mapShowTQSyncTask msTQsyncTask = null;
     String email;
     private RecyclerView timeRecListView;
+    private BottomNavigationView bottomNavView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +54,28 @@ public class MapShowActivity extends BaseActivity {
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN | WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN); //避免键盘盖住搜索框
         setContentView(R.layout.activity_map_show);
 
-        timeRecListView = (RecyclerView) findViewById(R.id.recordList);
+         bottomNavView = (BottomNavigationView)findViewById(R.id.nav_showInMap);
+         bottomNavView.setSelectedItemId(R.id.nav_queryTimeInfo);
+         bottomNavView.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+             @Override
+             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                 // Handle navigation view item clicks here.
+                 int id = item.getItemId();
+
+                 if (id == R.id.nav_queryTimeInfo) { //查询时间记录页面，默认选中，不需要处理
+
+                 } else { //地图显示页面
+//                     Toast.makeText(MapShowActivity.this,"时间记录地图显示！",Toast.LENGTH_SHORT).show();
+                     Intent in = new Intent(MapShowActivity.this, ShowinBDMap.class);
+                     in.putExtra("email",email);
+                     startActivity(in);
+                 }
+                 return true;
+             }
+         });
+
+         timeRecListView = (RecyclerView) findViewById(R.id.recordList);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         timeRecListView.setLayoutManager(layoutManager);
 

@@ -7,12 +7,15 @@ import android.bluetooth.BluetoothManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.support.design.widget.NavigationView;
@@ -30,6 +33,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.baidu.location.BDLocation;
+import com.example.administrator.ShowinBDMap;
 import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
 import com.example.administrator.timeRecording.Model.CheckinInfo;
 import com.example.administrator.timeRecording.Model.nodeInfo;
@@ -43,6 +48,7 @@ import com.sensoro.cloud.SensoroManager;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.greendao.query.QueryBuilder;
+import org.w3c.dom.Node;
 
 import java.io.UnsupportedEncodingException;
 import java.sql.ResultSet;
@@ -117,6 +123,47 @@ public class MainActivity extends BaseActivity
         Intent in = getIntent();
         email = in.getStringExtra("email"); //从Intent中取得登录用户的email信息，用于检索userInfo表，获取用户信息
         Log.d("MainActivity","当前登录用户邮箱："+email);
+
+        //构造权限list，检测是否定位所要求权限得到满足，不满足，将该权限加入list并通过requestPermission一次性解决权限问题
+        List<String> permissionList = new ArrayList<>();
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.READ_PHONE_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.BLUETOOTH)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.BLUETOOTH);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.BLUETOOTH_ADMIN);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.ACCESS_COARSE_LOCATION)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.INTERNET)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.INTERNET);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.ACCESS_WIFI_STATE )!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.ACCESS_WIFI_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.ACCESS_NETWORK_STATE)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.ACCESS_NETWORK_STATE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.READ_EXTERNAL_STORAGE)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+        if(ContextCompat.checkSelfPermission(MainActivity.this,Manifest.permission.CHANGE_NETWORK_STATE)!=PackageManager.PERMISSION_GRANTED) {
+            permissionList.add(Manifest.permission.CHANGE_NETWORK_STATE);
+        }
+
+        if(!permissionList.isEmpty()) {
+            String [] permissions = permissionList.toArray(new String[permissionList.size()]);
+            ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
+        }
 
         //初始化
         init();
@@ -394,6 +441,10 @@ public class MainActivity extends BaseActivity
                     time.setEmail(email);
                     time.setIbeacn_sn(sn);
                     time.setTime(date);
+                    //调用百度地图相关函数，显示当前位置经纬度
+                    BDLocation location;
+
+
                     //调用时间记录处理函数
                     saveTimeInfo(time);
                     ((myApp)getApplication()).checkinState = true; //设置为true，表示已经找到位置锚点且记录过时间信息。
@@ -463,6 +514,9 @@ public class MainActivity extends BaseActivity
                     tv_sn_info.setText(sn);
                     tv_id_info.setText(node.getNodeID());
                     tv_pos_des.setText(node.getPosition());
+//                    BDLocation location;
+//                    tv_longitude.setText((int) location.getLongitude());
+//                    tv_latitude.setText((int) location.getLatitude());
                     tv_longitude.setText(node.getLongitude().toString());
                     tv_latitude.setText(node.getLatitude().toString());
                 long ctime = System.currentTimeMillis();

@@ -114,5 +114,6 @@
     <string name="title_activity_user_info">个人信息</string>
     <string name="userName">unknow</string>
     <string name="title_activity_map_show">MapShowActivity</string>
+    <string name="title_activity_showin_bdmap">ShowinBDMap</string>
 
 </resources>

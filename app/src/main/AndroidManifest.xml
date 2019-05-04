@@ -72,11 +72,14 @@
         <service
             android:name="com.baidu.location.f"
             android:enabled="true"
-            android:process=":remote"></service>
+            android:process=":remote" />
 
         <activity
             android:name=".MapShowActivity"
-            android:label="@string/title_activity_map_show"></activity>
+            android:label="@string/title_activity_map_show" />
+        <activity
+            android:name="com.example.administrator.ShowinBDMap"
+            android:label="@string/title_activity_showin_bdmap"></activity>
     </application>
 
 </manifest>

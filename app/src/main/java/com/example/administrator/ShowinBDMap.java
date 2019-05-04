@@ -15,6 +15,13 @@ import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.model.LatLng;
 import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
 import com.example.administrator.timeRecording.MainActivity;
 import com.example.administrator.timeRecording.R;
@@ -23,11 +30,15 @@ import com.mysql.jdbc.MiniAdmin;
 import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ShowinBDMap extends BaseActivity {
 
     public LocationClient mLocationClient;
+    private MapView mapView;
     private TextView positionText;
+    private BaiduMap baiduMap;
+    private boolean isFirstLocate  = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,8 +46,13 @@ public class ShowinBDMap extends BaseActivity {
         //百度地图相关处理
         mLocationClient = new LocationClient(getApplicationContext());
         mLocationClient.registerLocationListener(new MyLocationListener());
+        SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_showin_bdmap);
+        mapView = (MapView)findViewById(R.id.bdmapView);
+        baiduMap = mapView.getMap();
+        baiduMap.setMyLocationEnabled(true);
         positionText = (TextView)findViewById(R.id.coordination);
+
         //构造权限list，检测是否定位所要求权限得到满足，不满足，将该权限加入list
         List<String> permissionList = new ArrayList<>();
         if(ContextCompat.checkSelfPermission(ShowinBDMap.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
@@ -69,11 +85,44 @@ public class ShowinBDMap extends BaseActivity {
         mLocationClient.setLocOption(option);
     }
 
+    //第一次使用地图时，将我的位置显示出来
+    private void navigateTo(BDLocation location) {
+        if(isFirstLocate) {
+            LatLng ll = new LatLng(location.getLatitude(),location.getLongitude());
+            MapStatusUpdate update = MapStatusUpdateFactory.newLatLng(ll);
+            baiduMap.animateMapStatus(update);
+            update = MapStatusUpdateFactory.zoomTo(16f);
+            isFirstLocate = false;
+        }
+
+        MyLocationData.Builder locationBuilder = new MyLocationData.Builder();
+        locationBuilder.latitude(location.getLatitude());
+        locationBuilder.longitude(location.getLongitude());
+        MyLocationData locationData = locationBuilder.build();
+        baiduMap.setMyLocationData(locationData);
+    }
+
+//    @Override
+    protected void OnResume() {
+        super.onResume();
+        mapView.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mapView.onPause();
+    }
+
+    @Override
     protected void onDestroy() {
         super.onDestroy();
         mLocationClient.stop();
+        mapView.onDestroy();
+        baiduMap.setMyLocationEnabled(false);
     }
 
+    @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         switch (requestCode) {
             case 1:
@@ -96,26 +145,34 @@ public class ShowinBDMap extends BaseActivity {
     }
 
     public class MyLocationListener implements BDLocationListener {
+        @Override
         public void onReceiveLocation(final BDLocation location) {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    {
-                        StringBuilder currentPosition = new StringBuilder();
-                        currentPosition.append("纬度：").append(location.getLatitude()).append("\n");
-                        currentPosition.append("经线：").append(location.getLongitude()).append("\n");
-                        currentPosition.append("定位方式：");
-                        if(location.getLocType() == BDLocation.TypeGpsLocation) {
-                            currentPosition.append("GPS");
-                        } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-                            currentPosition.append("网络");
-                        }
-                        positionText.setText(currentPosition);
-                    }
-                }
-            });
+
+            if(location.getLocType() == BDLocation.TypeGpsLocation || location.getLocType() == BDLocation.TypeNetWorkLocation) {
+                navigateTo(location);
+            }
+
+            //在文本上显示位置信息
+//            runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    {
+//                        StringBuilder currentPosition = new StringBuilder();
+//                        currentPosition.append("纬度：").append(location.getLatitude()).append("\n");
+//                        currentPosition.append("经线：").append(location.getLongitude()).append("\n");
+//                        currentPosition.append("定位方式：");
+//                        if(location.getLocType() == BDLocation.TypeGpsLocation) {
+//                            currentPosition.append("GPS");
+//                        } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+//                            currentPosition.append("网络");
+//                        }
+//                        positionText.setText(currentPosition);
+//                    }
+//                }
+//            });
         }
 
+//        @Override
         public void onConnectHotSpotMessage(String s, int i) {
 
         }

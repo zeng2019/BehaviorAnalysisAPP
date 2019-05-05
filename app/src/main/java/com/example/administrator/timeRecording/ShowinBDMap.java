@@ -1,16 +1,13 @@
-package com.example.administrator;
+package com.example.administrator.timeRecording;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.drm.DrmInfoEvent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
 import com.baidu.location.LocationClient;
@@ -23,14 +20,9 @@ import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
-import com.example.administrator.timeRecording.MainActivity;
-import com.example.administrator.timeRecording.R;
-import com.mysql.jdbc.MiniAdmin;
 
-import java.security.Permission;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ShowinBDMap extends BaseActivity {
 

@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
-import com.example.administrator.ShowinBDMap;
 import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
 import com.example.administrator.timeRecording.Model.CheckinInfo;
 import com.example.administrator.timeRecording.Model.nodeInfo;
@@ -48,11 +47,7 @@ import com.sensoro.cloud.SensoroManager;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.greendao.query.QueryBuilder;
-import org.w3c.dom.Node;
 
-import java.io.UnsupportedEncodingException;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;

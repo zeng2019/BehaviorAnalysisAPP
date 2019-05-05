@@ -78,7 +78,7 @@
             android:name=".MapShowActivity"
             android:label="@string/title_activity_map_show" />
         <activity
-            android:name="com.example.administrator.ShowinBDMap"
+            android:name=".ShowinBDMap"
             android:label="@string/title_activity_showin_bdmap"></activity>
     </application>
 

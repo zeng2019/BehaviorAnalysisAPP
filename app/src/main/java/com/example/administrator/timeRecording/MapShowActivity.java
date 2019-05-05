@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -13,32 +12,17 @@ import android.view.MenuItem;
 import android.view.WindowManager;
 import android.widget.Toast;
 
-import com.example.administrator.ShowinBDMap;
 import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
-import com.example.administrator.timeRecording.Model.nodeInfo;
-import com.mysql.jdbc.PreparedStatement;
 
-import java.security.PrivateKey;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
-import java.sql.SQLDataException;
-import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
 
 import scut.carson_ho.searchview.ICallBack;
 import scut.carson_ho.searchview.bCallBack;
 
-import static android.widget.Toast.LENGTH_SHORT;
 import static android.widget.Toast.makeText;
-import static com.example.administrator.timeRecording.DBNodeOperator.insertNodeInfo;
-import static com.example.administrator.timeRecording.DBNodeOperator.queryNodeInfo;
 import static com.example.administrator.timeRecording.DBTimeOperator.queryTimeInfo;
-import static com.example.administrator.timeRecording.DbOperator.getConnection;
 
 public class MapShowActivity extends BaseActivity {
     

@@ -9,10 +9,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
-import com.example.administrator.timeRecording.Model.CheckinInfo;
 import com.example.administrator.timeRecording.Model.UserInfo;
-import com.example.administrator.timeRecording.greendao.CheckinInfoDao;
 import com.example.administrator.timeRecording.greendao.DaoSession;
 import com.example.administrator.timeRecording.greendao.UserInfoDao;
 

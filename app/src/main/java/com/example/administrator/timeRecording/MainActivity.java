@@ -34,7 +34,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.baidu.location.BDLocation;
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
 import com.example.administrator.timeRecording.Model.CheckinInfo;
 import com.example.administrator.timeRecording.Model.nodeInfo;
 import com.example.administrator.timeRecording.UI.upImage;

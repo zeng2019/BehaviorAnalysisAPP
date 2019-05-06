@@ -19,7 +19,7 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
+import com.example.administrator.timeRecording.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,7 +94,7 @@ public class ShowinBDMap extends BaseActivity {
         baiduMap.setMyLocationData(locationData);
     }
 
-//    @Override
+    //    @Override
     protected void OnResume() {
         super.onResume();
         mapView.onResume();
@@ -132,7 +132,7 @@ public class ShowinBDMap extends BaseActivity {
                     finish();
                 }
                 break;
-                default:
+            default:
         }
     }
 
@@ -143,28 +143,9 @@ public class ShowinBDMap extends BaseActivity {
             if(location.getLocType() == BDLocation.TypeGpsLocation || location.getLocType() == BDLocation.TypeNetWorkLocation) {
                 navigateTo(location);
             }
-
-            //在文本上显示位置信息
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    {
-//                        StringBuilder currentPosition = new StringBuilder();
-//                        currentPosition.append("纬度：").append(location.getLatitude()).append("\n");
-//                        currentPosition.append("经线：").append(location.getLongitude()).append("\n");
-//                        currentPosition.append("定位方式：");
-//                        if(location.getLocType() == BDLocation.TypeGpsLocation) {
-//                            currentPosition.append("GPS");
-//                        } else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-//                            currentPosition.append("网络");
-//                        }
-//                        positionText.setText(currentPosition);
-//                    }
-//                }
-//            });
         }
 
-//        @Override
+        //        @Override
         public void onConnectHotSpotMessage(String s, int i) {
 
         }

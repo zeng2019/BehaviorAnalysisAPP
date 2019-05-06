@@ -52,7 +52,7 @@
         <activity
             android:name=".RegisterActivity"
             android:label="@string/title_activity_register" />
-        <activity android:name=".BaseAcivity.BaseActivity" />
+        <activity android:name=".BaseActivity" />
         <activity android:name=".UI.upImage" />
         <activity android:name=".personInfoRevise" />
         <activity android:name=".aboutus" />

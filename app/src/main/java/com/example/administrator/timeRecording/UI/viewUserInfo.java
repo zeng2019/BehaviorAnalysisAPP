@@ -2,7 +2,7 @@ package com.example.administrator.timeRecording.UI;
 
 
 import android.os.Bundle;
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
+import com.example.administrator.timeRecording.BaseActivity;
 import com.example.administrator.timeRecording.R;
 
 /**

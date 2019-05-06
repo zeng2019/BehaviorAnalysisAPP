@@ -1,4 +1,4 @@
-package com.example.administrator.timeRecording.BaseAcivity;
+package com.example.administrator.timeRecording;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

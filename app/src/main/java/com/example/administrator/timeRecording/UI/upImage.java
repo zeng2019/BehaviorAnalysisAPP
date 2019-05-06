@@ -9,19 +9,12 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 
-import android.os.LocaleList;
-import android.provider.ContactsContract;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.View;
 
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
+import com.example.administrator.timeRecording.BaseActivity;
 import com.example.administrator.timeRecording.R;
 import com.example.administrator.timeRecording.utils.Glide4Engine;
 
@@ -40,7 +33,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.Observer;
-import io.reactivex.android.plugins.RxAndroidPlugins;
 import io.reactivex.disposables.Disposable;
 
 /**

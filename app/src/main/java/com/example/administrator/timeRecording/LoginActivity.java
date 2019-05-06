@@ -15,7 +15,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -27,18 +26,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
-import com.example.administrator.timeRecording.Model.UserInfo;
-import com.example.administrator.timeRecording.Model.nodeInfo;
-import com.example.administrator.timeRecording.greendao.DaoSession;
 import com.example.administrator.timeRecording.greendao.UserInfoDao;
 import com.example.administrator.timeRecording.utils.AppManager;
 import com.mysql.jdbc.Connection;
 
-import org.greenrobot.greendao.query.QueryBuilder;
-
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;

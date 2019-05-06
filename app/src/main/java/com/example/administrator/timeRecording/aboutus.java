@@ -3,8 +3,6 @@ package com.example.administrator.timeRecording;
 import android.os.Bundle;
 import android.widget.TextView;
 
-import com.example.administrator.timeRecording.BaseAcivity.BaseActivity;
-
 public class aboutus extends BaseActivity {
 
     private TextView tv_aboutsText;

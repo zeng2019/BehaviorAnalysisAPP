@@ -173,8 +173,8 @@ public class MainActivity extends BaseActivity
      */
     private void init() {
         initView(); //界面元素变量定义
-        initNodeInfo(); //初始化nodeInfo数据库
-        initCtrl();
+//        initNodeInfo(); //初始化nodeInfo数据库
+         initCtrl();
         initHander();
 //        initUserInfo();
     }

@@ -252,14 +252,6 @@ public class LoginActivity extends BaseActivity {
             // TODO: attempt authentication against a network service.
 
             boolean loginFlag = false;
-//
-//              try {
-//                // Simulate network access.//模拟用户验证耗时
-//
-//                Thread.sleep(2000);
-//            } catch (InterruptedException e) {
-//                  e.printStackTrace();
-//            }
 
             //使用数据库登陆
 /*            DaoSession daoSession = ((myApp)getApplication()).getDaoSession();
@@ -272,6 +264,14 @@ public class LoginActivity extends BaseActivity {
                 showToast("登录错误！");
                   return false;
             }*/
+
+///////////////////20190506************************
+//为了方便测试，加入该段代码
+if (mEmail.equals("123@123.com") && mPassword.equals("123456")) {
+    return true;
+}
+////////////////20190506 end *************************88
+
             //直连后台数据库，查找用户信息，并登陆
             try {
                 Class.forName("com.mysql.jdbc.Driver");

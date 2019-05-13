@@ -270,14 +270,14 @@ public class LoginActivity extends BaseActivity {
 if (mEmail.equals("123@123.com") && mPassword.equals("123456")) {
     return true;
 }
-////////////////20190506 end *************************88
+////////////////20190506 end *************************
 
             //直连后台数据库，查找用户信息，并登陆
             try {
                 Class.forName("com.mysql.jdbc.Driver");
                 try {
                     Connection cn;
-//                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.1.200:3306/INFO","zeng","123456");
+//                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.1.200:3306/INFO","root","123456");
                     cn = (Connection) getConnection();
 
                     String sql="select * from userInfo";

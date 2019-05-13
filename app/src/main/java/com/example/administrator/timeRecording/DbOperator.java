@@ -20,7 +20,7 @@ public class DbOperator {
         int port=3306;
         String dbName = "INFO";
         String url="jdbc:mysql://"+ip+":"+port+"/"+dbName;
-        String user="zeng";
+        String user="root";
         String password="123456";
 
         try{

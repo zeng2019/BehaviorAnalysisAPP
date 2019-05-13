@@ -702,13 +702,13 @@ public class MainActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement. 右边的配置选项，暂时不做处理！！
+    //noinspection SimplifiableIfStatement. 右边的配置选项，暂时不做处理！！
         if (id == R.id.action_settings) {
-            return true;
-        }
+        return true;
+    }
 
         return super.onOptionsItemSelected(item);
-    }
+}
 
     /**
      * 功能：处理时间记录界面的左上角导航栏的项目

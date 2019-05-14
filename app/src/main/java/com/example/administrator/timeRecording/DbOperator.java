@@ -25,7 +25,6 @@ public class DbOperator {
 
         try{
             Class.forName(driver_class);
-            con = null;
             con = DriverManager.getConnection(url,user,password);
             if(con != null)
                 Log.d("数据库连接：","数据库连接成功！");
@@ -37,7 +36,6 @@ public class DbOperator {
             // TODO Auto-generated catch block
             e.printStackTrace();
             Log.d("数据库连接：","失败！");
-
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

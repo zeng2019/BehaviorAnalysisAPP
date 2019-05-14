@@ -70,8 +70,12 @@ public class LoginActivity extends BaseActivity {
 
         // Set up the login form.
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
-
         mPasswordView = (EditText) findViewById(R.id.password);
+
+        //测试用
+        mEmailView.setText("123@123.com");
+        mPasswordView.setText("123456");
+
         //在密码编辑界面判断软键盘，正确后尝试登陆
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -118,12 +122,7 @@ public class LoginActivity extends BaseActivity {
 
 
     /**
-     * Attempt
-     * rrors (invalid email, missing fields, etc.), the
-     * errors are presented and no actual login attempt is made.
-     * 尝试登录或注册登录表单指定的帐户。
-     * 如果存在表单错误（无效电子邮件、丢失字段等），则
-     * 出现错误，不进行实际的登录尝试。
+     * 检查表单内容，内容正确则进行登录
      */
     private void attemptLogin() {
         if (mAuthTask != null) {
@@ -149,7 +148,6 @@ public class LoginActivity extends BaseActivity {
             cancel = true;
         }
         // Check for a valid email address.
-        // 设置邮箱格式
         if (TextUtils.isEmpty(email)) {
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
@@ -161,12 +159,9 @@ public class LoginActivity extends BaseActivity {
         }
 
         if (cancel) {
-            // There was an error; don't attempt login and focus the first
-            // form field with an error.
             //如果格式错误，输入框重新获得输入焦点
             focusView.requestFocus();
         } else {
-
             //如果输入的格式正确，显示验证等待对话框，并启动验证线程
             showProgress(true);
             mAuthTask = new UserLoginTask(email, password); //通过JDBC，登录mysql数据库检测
@@ -181,7 +176,6 @@ public class LoginActivity extends BaseActivity {
     }
 
     private boolean isPasswordValid(String password) {
-        //TODO: Replace this with your own logic
         return password.length() > 4;
     }
 
@@ -194,9 +188,6 @@ public class LoginActivity extends BaseActivity {
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         //获取运行平台的版本与应用的版本对比实现功能的兼容性
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             //获取系统定义时间
             int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
@@ -223,15 +214,12 @@ public class LoginActivity extends BaseActivity {
                         }
                     });
         } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
             // 跟据参数控制该控件显示或隐藏
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
 
         }
     }
-
 
     /**
      * Represents an asynchronous login/registration task used to authenticate
@@ -264,13 +252,6 @@ public class LoginActivity extends BaseActivity {
                 showToast("登录错误！");
                   return false;
             }*/
-
-///////////////////20190506************************
-//为了方便测试，加入该段代码
-if (mEmail.equals("123@123.com") && mPassword.equals("123456")) {
-    return true;
-}
-////////////////20190506 end *************************
 
             //直连后台数据库，查找用户信息，并登陆
             try {

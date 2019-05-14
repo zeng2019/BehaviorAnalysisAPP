@@ -118,6 +118,12 @@ public class MainActivity extends BaseActivity
         email = in.getStringExtra("email"); //从Intent中取得登录用户的email信息，用于检索userInfo表，获取用户信息
         Log.d("MainActivity","当前登录用户邮箱："+email);
 
+        myPermissionRequest();
+        //初始化
+        init();
+    }
+
+    private void myPermissionRequest() {
         //构造权限list，检测是否定位所要求权限得到满足，不满足，将该权限加入list并通过requestPermission一次性解决权限问题
         List<String> permissionList = new ArrayList<>();
         if(ContextCompat.checkSelfPermission(MainActivity.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
@@ -158,9 +164,6 @@ public class MainActivity extends BaseActivity
             String [] permissions = permissionList.toArray(new String[permissionList.size()]);
             ActivityCompat.requestPermissions(MainActivity.this,permissions,1);
         }
-
-        //初始化
-        init();
     }
 
     @Override
@@ -173,8 +176,8 @@ public class MainActivity extends BaseActivity
      */
     private void init() {
         initView(); //界面元素变量定义
-//        initNodeInfo(); //初始化nodeInfo数据库
-         initCtrl();
+        initNodeInfo(); //初始化nodeInfo数据库
+        initCtrl();
         initHander();
 //        initUserInfo();
     }
@@ -702,13 +705,13 @@ public class MainActivity extends BaseActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-    //noinspection SimplifiableIfStatement. 右边的配置选项，暂时不做处理！！
+        //noinspection SimplifiableIfStatement. 右边的配置选项，暂时不做处理！！
         if (id == R.id.action_settings) {
-        return true;
-    }
+            return true;
+        }
 
         return super.onOptionsItemSelected(item);
-}
+    }
 
     /**
      * 功能：处理时间记录界面的左上角导航栏的项目

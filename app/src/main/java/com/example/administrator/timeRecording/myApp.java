@@ -1,6 +1,11 @@
 package com.example.administrator.timeRecording;
 
+import android.annotation.SuppressLint;
+import android.app.AlarmManager;
 import android.app.Application;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 
 import com.bumptech.glide.annotation.GlideModule;
@@ -25,6 +30,7 @@ import okhttp3.OkHttpClient;
  */
 public class myApp extends Application {
 
+    private static myApp app; //用于异常退出后，重启App
     private static final String TAG= myApp.class.getSimpleName();
     //数据库操作全局对象
     SensoroManager sensoroManager;
@@ -34,6 +40,9 @@ public class myApp extends Application {
     @Override
     public void onCreate(){
         super.onCreate();
+        app = this;
+        // 程序崩溃时触发线程  以下用来捕获程序崩溃异常
+        Thread.setDefaultUncaughtExceptionHandler(handler);
         //okttp
         initOkhttpClient();
         //bluetooth
@@ -41,6 +50,26 @@ public class myApp extends Application {
         //greendao
         initGreenDao();
     }
+
+    private Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
+        @Override
+        public void uncaughtException(Thread t, Throwable e) {
+            restartAPP(); //程序异常时，重启APP
+        }
+    };
+
+    private void restartAPP() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        @SuppressLint("WrongConstant") PendingIntent restartIntent = PendingIntent.getActivity(
+                app.getApplicationContext(),0,intent,Intent.FLAG_ACTIVITY_NEW_TASK);
+        //退出程序
+        AlarmManager mgr = (AlarmManager)app.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC,System.currentTimeMillis()+1000,restartIntent); //1秒后重启应用
+
+        //结束进程之前，把程序注销或者退出代码放在此句之前
+        android.os.Process.killProcess(android.os.Process.myPid());
+    }
+
     /*
      *配置OkhttpClient
      */

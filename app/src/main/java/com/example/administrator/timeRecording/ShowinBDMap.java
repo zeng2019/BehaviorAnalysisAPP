@@ -1,13 +1,16 @@
 package com.example.administrator.timeRecording;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -36,6 +39,9 @@ import com.example.administrator.timeRecording.BaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import static com.example.administrator.timeRecording.DBTimeOperator.queryTimeInfo;
 
 public class ShowinBDMap extends BaseActivity {
 
@@ -45,6 +51,11 @@ public class ShowinBDMap extends BaseActivity {
     private BaiduMap baiduMap;
     private boolean isFirstLocate  = true;
     LatLng llcu = null; //所处位置坐标
+
+    //统计用户时间
+    private timeStatisticalSyncTask timeStatSyncTask = null;
+    private String email;
+    private List<Map<String,Object>> timeList = new ArrayList<>();
 
     //定义位图变量
     private Marker mMarkerTsg;
@@ -72,22 +83,14 @@ public class ShowinBDMap extends BaseActivity {
         bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon_gcoding);
         bdground = BitmapDescriptorFactory.fromResource(R.drawable.ground_overlay);
 
-        //构造权限list，检测是否定位所要求权限得到满足，不满足，将该权限加入list
-        List<String> permissionList = new ArrayList<>();
-        if(ContextCompat.checkSelfPermission(ShowinBDMap.this, Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        }
-        if(ContextCompat.checkSelfPermission(ShowinBDMap.this,Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.READ_PHONE_STATE);
-        }
-        if(ContextCompat.checkSelfPermission(ShowinBDMap.this,Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            permissionList.add(Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        }
-        if(!permissionList.isEmpty()) {
-            String [] permissions = permissionList.toArray(new String[permissionList.size()]);
-            ActivityCompat.requestPermissions(ShowinBDMap.this,permissions,1);
-        } else {
-            requestLocation();
+        requestLocation();
+
+        //获得指定用户的时间记录，统计在各处花费的时间
+        Intent in = getIntent();
+        email = in.getStringExtra("email"); //从Intent中取得登录用户的email
+        totalTimeStatistic(email);
+        for(int i=0; i<timeList.size();i++) {
+            Log.d("时间记录信息：",timeList.get(i).get("recTime").toString());
         }
 
         //初始化覆盖物
@@ -196,6 +199,55 @@ public class ShowinBDMap extends BaseActivity {
                 return true;
             }
         });
+    }
+
+    private void totalTimeStatistic(String email) {
+
+        //根据用户名，将用户在该区域活动的时间记录提取出来
+        timeStatSyncTask = new timeStatisticalSyncTask(this.email);
+        timeStatSyncTask.execute((Void) null);
+
+        for(int i=0; i<timeList.size();i++) {
+            Log.d("时间记录信息：",timeList.get(i).get("recTime").toString());
+        }
+
+    }
+
+    public class timeStatisticalSyncTask extends AsyncTask<Void, Void, Boolean> {
+        String condition;
+   //     private List<Map<String,Object>> timeList = new ArrayList<>();
+
+        public timeStatisticalSyncTask(String cond) {
+            super();
+            condition = cond;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            boolean isDone = false;
+
+            //登陆mysql，根据条件检索timeInfo并根据返回的ResultSet构造用于recycleView显示的字符串
+            timeList = queryTimeInfo(condition);
+            isDone = true;
+
+            return isDone;
+        }
+
+        @Override
+        //线程结束后的ui处理
+        protected void onPostExecute(final Boolean isDone) {
+            timeStatSyncTask = null;
+
+            if (isDone) {
+//                Toast.makeText(MapShowActivity.this,"时间记录检索成功！",Toast.LENGTH_SHORT).show();
+                if(timeList.isEmpty()) {
+                    Toast.makeText(ShowinBDMap.this,"您还没有记录过时间信息！",Toast.LENGTH_SHORT).show();
+                }
+            } else {
+                Toast.makeText(ShowinBDMap.this,"时间记录检索失败！",Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     private void initOverlay() {

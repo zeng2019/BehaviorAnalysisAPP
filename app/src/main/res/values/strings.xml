@@ -14,7 +14,7 @@
     <string name="mregister">注册</string>
     <string name="prompt_telephone">电话号码</string>
     <string name="title_activity_login_after">LoginAfterActivity</string>
-    <string name="title_activity_main">个人时间管理</string>
+    <string name="title_activity_main">记录时间</string>
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_header_title">用户名:</string>

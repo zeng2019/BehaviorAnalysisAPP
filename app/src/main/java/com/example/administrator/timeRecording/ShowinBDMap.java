@@ -8,6 +8,7 @@ import android.graphics.BitmapRegionDecoder;
 import android.graphics.Color;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -38,6 +39,7 @@ import com.baidu.mapapi.model.LatLngBounds;
 import com.example.administrator.timeRecording.BaseActivity;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -56,6 +58,9 @@ public class ShowinBDMap extends BaseActivity {
     private timeStatisticalSyncTask timeStatSyncTask = null;
     private String email;
     private List<Map<String,Object>> timeList = new ArrayList<>();
+    String timeText_library;
+    String timeText_JiaYuan;
+    String timeText_GongKeJiaoXueLou;
 
     //定义位图变量
     private Marker mMarkerTsg;
@@ -89,9 +94,6 @@ public class ShowinBDMap extends BaseActivity {
         Intent in = getIntent();
         email = in.getStringExtra("email"); //从Intent中取得登录用户的email
         totalTimeStatistic(email);
-        for(int i=0; i<timeList.size();i++) {
-            Log.d("时间记录信息：",timeList.get(i).get("recTime").toString());
-        }
 
         //初始化覆盖物
         initOverlay();
@@ -104,10 +106,13 @@ public class ShowinBDMap extends BaseActivity {
                 button.setBackgroundResource(R.drawable.popup);
                 InfoWindow.OnInfoWindowClickListener listener = null;
 
+                //统计时间并展示在地图上
+                timeStatistic();
+
                 if(marker == mMarkerTsg) {
-                    button.setText("图书馆");
+                    button.setText("图书馆: "+ timeText_library);
                     button.setTextColor(Color.BLACK);
-                    button.setWidth(300);
+                    button.setWidth(500);
 
                     listener = new InfoWindow.OnInfoWindowClickListener() {
                         @Override
@@ -120,9 +125,9 @@ public class ShowinBDMap extends BaseActivity {
                     mInfoWindow = new InfoWindow(BitmapDescriptorFactory.fromView(button), ll, -47, listener);
                     baiduMap.showInfoWindow(mInfoWindow);
                 } else if (marker == mMarkerJiaYuan) {
-                    button.setText("嘉 园");
+                    button.setText("嘉 园: "+timeText_JiaYuan);
                     button.setTextColor(Color.BLACK);
-                    button.setWidth(300);
+                    button.setWidth(500);
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -135,9 +140,9 @@ public class ShowinBDMap extends BaseActivity {
                     mInfoWindow = new InfoWindow(button,ll,-47);
                     baiduMap.showInfoWindow(mInfoWindow);
                 } else if (marker == mMarkerJinYuan) {
-                    button.setText("菁 园");
+                    button.setText("菁 园: 0天0小时0分");
                     button.setTextColor(Color.BLACK);
-                    button.setWidth(300);
+                    button.setWidth(500);
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -150,9 +155,9 @@ public class ShowinBDMap extends BaseActivity {
                     mInfoWindow = new InfoWindow(button,ll,-47);
                     baiduMap.showInfoWindow(mInfoWindow);
                 }  else if (marker == mMarkerXXDaMen) {
-                    button.setText("学校正门出口：");
+                    button.setText("学校正门出口：0天0小时0分");
                     button.setTextColor(Color.BLACK);
-                    button.setWidth(300);
+                    button.setWidth(500);
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -165,9 +170,9 @@ public class ShowinBDMap extends BaseActivity {
                     mInfoWindow = new InfoWindow(button,ll,-47);
                     baiduMap.showInfoWindow(mInfoWindow);
                 } else if (marker == mMarkerXXLongXiangJie) {
-                    button.setText("龙祥街出口：");
+                    button.setText("龙祥街出口：0天0小时0分");
                     button.setTextColor(Color.BLACK);
-                    button.setWidth(300);
+                    button.setWidth(500);
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -180,9 +185,9 @@ public class ShowinBDMap extends BaseActivity {
                     mInfoWindow = new InfoWindow(button,ll,-47);
                     baiduMap.showInfoWindow(mInfoWindow);
                 }  else if (marker == mMarkerGkl) {
-                    button.setText("工科教学楼");
+                    button.setText("工科教学楼："+timeText_GongKeJiaoXueLou);
                     button.setTextColor(Color.BLACK);
-                    button.setWidth(300);
+                    button.setWidth(500);
 
                     button.setOnClickListener(new View.OnClickListener() {
                         @Override
@@ -199,6 +204,83 @@ public class ShowinBDMap extends BaseActivity {
                 return true;
             }
         });
+    }
+
+    private  void timeStatistic() {
+        //设立每个区域的时间统计列表。统计每个区域的时间
+        Log.d("时间记录信息：","分析！");
+        List<Date> libraryTimeList = new ArrayList<>();
+        List<Date> gongKeJiaoXueLouTimeList = new ArrayList<>();
+        List<Date> jiaYuanTimeList = new ArrayList<>();
+        long totalTimeLib = 0;
+        long totalTimeGongKeJiaoXuelou = 0;
+        long totalTimeJiaYuan = 0;
+        long diff = 0;
+        long nd = 1000 * 24 * 60 * 60;
+        long nh = 1000 * 60 * 60;
+        long nm = 1000 * 60;
+        // 计算差多少天
+        long day ;
+        // 计算差多少小时
+        long hour;
+        //totalTimeLib 计算差多少分钟
+        long min;
+        for(int i=0; i<timeList.size();i++) {
+            if (timeList.get(i).get("recNodeSN").toString().equals("0117C5976A3E")) //图书馆
+                libraryTimeList.add((Date)timeList.get(i).get("recTime"));
+            else if (timeList.get(i).get("recNodeSN").toString().equals("0117C597055B")) //工科教学楼
+                gongKeJiaoXueLouTimeList.add((Date)timeList.get(i).get("recTime"));
+            else if (timeList.get(i).get("recNodeSN").toString().equals("0117C5976771")) { //嘉园宿舍
+                jiaYuanTimeList.add((Date) timeList.get(i).get("recTime"));
+            }
+            else
+                Log.d("时间记录分析：","失败，存在未知时间记录！");
+        }
+
+        for(int i=libraryTimeList.size()-1;i>0;i--) { //图书馆时间
+            // 获得两个时间的毫秒时间差异
+//                    Log.d("时间记录分析：","日期："+libraryTimeList.get(i));
+//                        long time1 = libraryTimeList.get(i).getTime();
+//                        long time2 = libraryTimeList.get(i-1).getTime();
+//                         Log.d("时间记录分析：","时间1:"+time1+"时间2："+time2);
+            diff = libraryTimeList.get(i).getTime() - libraryTimeList.get(i-1).getTime();
+            totalTimeLib = totalTimeLib + diff;
+//                         Log.d("时间记录分析：","图书馆的总时间（秒）:"+totalTimeLib);
+
+        }
+        // 计算差多少天
+        day = totalTimeLib / nd;
+        // 计算差多少小时
+        hour = totalTimeLib % nd / nh;
+        //totalTimeLib 计算差多少分钟
+        min = totalTimeLib % nd % nh / nm;
+        timeText_library = day + "天" + hour + "小时" + min + "分钟";
+
+        //统计教学楼时间
+        for(int i=gongKeJiaoXueLouTimeList.size()-1;i>0;i--) {
+            diff = gongKeJiaoXueLouTimeList.get(i).getTime() - gongKeJiaoXueLouTimeList.get(i-1).getTime();
+            totalTimeGongKeJiaoXuelou = totalTimeGongKeJiaoXuelou + diff;
+        }
+        // 计算差多少天
+        day = totalTimeGongKeJiaoXuelou / nd;
+        // 计算差多少小时
+        hour = totalTimeGongKeJiaoXuelou % nd / nh;
+        //totalTimeLib 计算差多少分钟
+        min = totalTimeGongKeJiaoXuelou % nd % nh / nm;
+        timeText_GongKeJiaoXueLou = day + "天" + hour + "小时" + min + "分钟";
+
+        //统计宿舍时间
+        for(int i=jiaYuanTimeList.size()-1;i>0;i--) {
+            diff = jiaYuanTimeList.get(i).getTime() - jiaYuanTimeList.get(i-1).getTime();
+            totalTimeJiaYuan = totalTimeJiaYuan + diff;
+        }
+        // 计算差多少天
+        day = totalTimeJiaYuan / nd;
+        // 计算差多少小时
+        hour = totalTimeJiaYuan % nd / nh;
+        //totalTimeLib 计算差多少分钟
+        min = totalTimeJiaYuan % nd % nh / nm;
+        timeText_JiaYuan = day + "天" + hour + "小时" + min + "分钟";
     }
 
     private void totalTimeStatistic(String email) {

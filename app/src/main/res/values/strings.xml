@@ -108,12 +108,12 @@
     <string name="title_home">记录时间</string>
     <string name="title_dashboard">统计时间</string>
     <string name="title_notifications">分析时间</string>
-    <string name="title_activity_register">RegisterActivity</string>
+    <string name="title_activity_register">新用户注册</string>
     <string name="section_format">Hello World from section: %1$d</string>
-    <string name="title_activity_map">MapActivity</string>
+    <string name="title_activity_map">时间地图</string>
     <string name="title_activity_user_info">个人信息</string>
-    <string name="userName">unknow</string>
-    <string name="title_activity_map_show">MapShowActivity</string>
-    <string name="title_activity_showin_bdmap">ShowinBDMap</string>
+    <string name="userName">未知！</string>
+    <string name="title_activity_map_show">时间检索</string>
+    <string name="title_activity_showin_bdmap">时间地图</string>
 
 </resources>

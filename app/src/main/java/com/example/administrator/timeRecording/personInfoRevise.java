@@ -1,7 +1,9 @@
 package com.example.administrator.timeRecording;
 
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -15,7 +17,14 @@ import com.example.administrator.timeRecording.greendao.UserInfoDao;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.sql.Connection;
+import java.sql.SQLDataException;
+import java.sql.SQLException;
 import java.util.List;
+
+import static com.example.administrator.timeRecording.DBUserOperator.getUserInfo;
+import static com.example.administrator.timeRecording.DBUserOperator.queryUserInfo;
+import static com.example.administrator.timeRecording.DbOperator.getConnection;
 
 public class personInfoRevise extends BaseActivity {
     private UserInfoDao userInfoDao;
@@ -24,6 +33,9 @@ public class personInfoRevise extends BaseActivity {
     private TextView tv_tel;
     private TextView tv_school;
     private String email;
+
+    //用户信息查询异步任务
+    private userInfoRequestTask mUserInfoRequest = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +49,13 @@ public class personInfoRevise extends BaseActivity {
         email = in.getStringExtra("email"); //从Intent中取得登录用户的email信息，用于检索userInfo表，获取用户信息
         Log.d("personInfoRevise","当前登录用户："+email);
         //开启用户信息查询异步任务，查到结果后，显示在相应字段
-        UserInfo user = queryUserByEmail(email);
-        tv_name.setText(user.getUsername());
-        tv_tel.setText(String.valueOf(user.getTelnumber()));
-        tv_school.setText(user.getSchool());
+        mUserInfoRequest = new userInfoRequestTask(email);
+        mUserInfoRequest.execute((Void)null);
+
+//        UserInfo user = queryUserByEmail(email);
+//        tv_name.setText(user.getUsername());
+//        tv_tel.setText(String.valueOf(user.getTelnumber()));
+//        tv_school.setText(user.getSchool());
 
         btn_saveInfo.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -48,6 +63,43 @@ public class personInfoRevise extends BaseActivity {
                 Toast.makeText(personInfoRevise.this,"抱歉，还没有实现！",Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    public class userInfoRequestTask extends AsyncTask<Void, Void, Boolean> {
+        private final String mEmail;
+        UserInfo userInfo=null;
+
+        userInfoRequestTask(String email) {
+            mEmail = email;
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... voids) {
+            boolean isDone = false;
+
+            userInfo = getUserInfo(mEmail,"");
+
+            if (userInfo != null)
+                isDone = true;
+
+            return isDone;
+        }
+
+        @Override
+        //线程结束后的ui处理
+        protected void onPostExecute(final Boolean isDone) {
+            mUserInfoRequest = null;
+
+            if (isDone) {
+                tv_name.setText(userInfo.getUsername());
+                tv_tel.setText(String.valueOf(userInfo.getTelnumber()));
+                tv_school.setText(userInfo.getSchool());
+            } else {
+                //密码错误，输入框获得焦点，并提示错误
+                Toast.makeText(personInfoRevise.this, "出错了，查无此人！", Toast.LENGTH_SHORT).show();
+            }
+        }
+
     }
 
     /*
@@ -68,5 +120,7 @@ public class personInfoRevise extends BaseActivity {
             user = users.get(0);
         return user;
     }
+
+
 
 }

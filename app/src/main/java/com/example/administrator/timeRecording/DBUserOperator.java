@@ -91,6 +91,42 @@ public class DBUserOperator {
         return isExisted;
     }
 
+    public static UserInfo getUserInfo(String email, String name){
+
+        UserInfo user = new UserInfo();
+
+        Connection conn = getConnection();
+        String sql = "select * from userInfo where user_name='" + name+ "'||" + "user_email='"+email+"'";
+        PreparedStatement pstmt = null;
+        try {
+            pstmt = (PreparedStatement)conn.prepareStatement(sql);
+            ResultSet rs = pstmt.executeQuery();
+            Log.d("用户数据库操作：","用户查询执行完毕！");
+            while(rs.next()){
+                user.setEmail(rs.getString("user_email"));
+                user.setPassword(rs.getString("user_password"));
+                user.setUsername(rs.getString("user_name"));
+                user.setSchool(rs.getString("user_school"));
+                user.setTelnumber(rs.getString("user_phone"));
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.d("用户数据库操作：","查询用户信息异常出错！");
+        }
+
+        try{
+            if (conn != null)
+                conn.close();
+            if (pstmt != null)
+                pstmt.close();
+        }catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return user;
+
+    }
+
 /*
     public static Integer getAll() {
         Connection conn = getConnection();

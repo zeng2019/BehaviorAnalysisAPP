@@ -254,8 +254,6 @@ public class LoginActivity extends BaseActivity {
             }*/
 
             //直连后台数据库，查找用户信息，并登陆
-            try {
-                Class.forName("com.mysql.jdbc.Driver");
                 try {
                     Connection cn;
 //                    cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.1.200:3306/INFO","root","123456");
@@ -287,9 +285,6 @@ public class LoginActivity extends BaseActivity {
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            }
             //************************* end ******************************
             return loginFlag;
 
@@ -354,7 +349,7 @@ public class LoginActivity extends BaseActivity {
                     long time = System.currentTimeMillis();
                     Date date = new Date(time);
                     SimpleDateFormat format = new SimpleDateFormat("yyyy年MM月dd日 HH时mm分ss秒 EEE");
-                    sys_time.setText(format.format(date));
+                    sys_time.setText("当前时间："+format.format(date));
                     break;
                     default:
                         break;

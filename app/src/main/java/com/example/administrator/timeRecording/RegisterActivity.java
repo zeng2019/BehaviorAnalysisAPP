@@ -26,6 +26,7 @@ import java.sql.Statement;
 
 import static com.example.administrator.timeRecording.DBUserOperator.insertUserInfo;
 import static com.example.administrator.timeRecording.DBUserOperator.queryUserInfo;
+import static com.example.administrator.timeRecording.DbOperator.getConnection;
 
 
 /**
@@ -171,12 +172,6 @@ public class RegisterActivity extends Activity {
         protected Boolean doInBackground(Void... params) {
             boolean isDone = false;
 
-/*            try {
-                 Thread.sleep(2000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }*/
-
             //登陆mysql，查看用户是否存在，不存在则进行添加操作。
             if (!queryUserInfo(user.getUsername(),user.getEmail())) //用户不存在于数据库，执行添加操作
             {
@@ -252,74 +247,54 @@ public class RegisterActivity extends Activity {
                        }catch (InterruptedException e) {
                            Log.e("RegisterUser",e.toString());
                        }
-                       String ip="192.168.0.110";
-                       int port=3306;
-                       String dbName = "INFO";
-                       String url="jdbc:mysql://"+ip+":"+port+"/"+dbName;
-                       String user="zeng";
-                       String dbpassword="123456";
 
-                       try {
-                           Class.forName("com.mysql.jdbc.Driver");
-                           Connection cn = null;
+                       Connection cn;
+                       cn = (Connection) getConnection();
+
+                       if (cn!=null) {
+
+                           String sql = "select * from userInfo";
+
+                           Statement st = null;
+                           ResultSet rs = null;
+
                            try {
-                               cn = (Connection) DriverManager.getConnection("jdbc:mysql://192.168.0.110:3306/INFO","zeng","123456");
-                               Log.d("RegisterUser","数据库连接成功！");
+                            st = cn.createStatement();
+                            rs = st.executeQuery(sql);
+                            boolean existed = false;
+                           //当遍历完结果集合，依然找不到相同的记录，则表明用户不存在，可正常加入数据库
+                           while (rs.next()) {
+                               String userEmail = rs.getString("user_email");
+                               String username = rs.getString("user_name");
+                               Log.d("RegisterUser", userEmail + ": " + username);
+                               if (userEmail.equals(newEmail) || username.equals(newName)) {
+                                   Log.d("RegisterUser", "用户已存在，添加新用户失败！");
+                                   existed = true;
+                                   break;
+                               }
+                           }
+
+                               if (!existed) { //将用户插入数据库
+                                   sql = "insert into userInfo (user_name,user_password,user_email,user_phone,user_school) values (newName,newPass,newEmail,newTel,school)";
+                                   st.execute(sql);
+                                } else
+                                   showToast("邮箱或用户名已被使用，注册失败！", mcontext);
 
                            } catch (SQLException e) {
-                               Log.d("RegisterUser","数据库连接失败！");
+                               Log.d("RegisterUser","数据库操作失败！");
                            }
 
-                           if (cn!=null) {
-
-                               String sql = "select * from userInfo";
-
-                               Statement st = null;
-                               ResultSet rs = null;
-
-                               try {
-                                st = cn.createStatement();
-                                rs = st.executeQuery(sql);
-                                boolean existed = false;
-                               //当遍历完结果集合，依然找不到相同的记录，则表明用户不存在，可正常加入数据库
-                               while (rs.next()) {
-                                   String userEmail = rs.getString("user_email");
-                                   String username = rs.getString("user_name");
-                                   Log.d("RegisterUser", userEmail + ": " + username);
-                                   if (userEmail.equals(newEmail) || username.equals(newName)) {
-                                       Log.d("RegisterUser", "用户已存在，添加新用户失败！");
-                                       existed = true;
-                                       break;
-                                   }
-                               }
-
-                                   if (!existed) { //将用户插入数据库
-                                       sql = "insert into userInfo (user_name,user_password,user_email,user_phone,user_school) values (newName,newPass,newEmail,newTel,school)";
-                                       st.execute(sql);
-                                    } else
-                                       showToast("邮箱或用户名已被使用，注册失败！", mcontext);
-
-                               } catch (SQLException e) {
-                                   Log.d("RegisterUser","数据库操作失败！");
-                               }
-
-                               try {
-                                   //关闭数据库相关资源
-                                   cn.close();
-                                   st.close();
-                                   rs.close();
-                               } catch (SQLException e) {
-                                   Log.d("RegisterUser", "数据库连接关闭失败！");
-                               }
-
-                               return;
+                           try {
+                               //关闭数据库相关资源
+                               cn.close();
+                               st.close();
+                               rs.close();
+                           } catch (SQLException e) {
+                               Log.d("RegisterUser", "数据库连接关闭失败！");
                            }
-                       } catch (ClassNotFoundException e) {
-                           e.printStackTrace();
+                           return;
                        }
-
                    }
-
                }
            });
 

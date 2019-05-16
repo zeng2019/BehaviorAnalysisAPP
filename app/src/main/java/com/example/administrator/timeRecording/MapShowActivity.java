@@ -129,9 +129,9 @@ public class MapShowActivity extends BaseActivity {
                 if(list.isEmpty()) {
                     Toast.makeText(MapShowActivity.this,"您还没有记录过时间信息！",Toast.LENGTH_SHORT).show();
                 } else{
-                    for(int i=0; i<list.size();i++) {
-                        Log.d("时间记录信息：",list.get(i).get("recTime").toString());
-                    }
+//                    for(int i=0; i<list.size();i++) {
+//                        Log.d("时间记录信息：",list.get(i).get("recTime").toString());
+//                    }
                     timeInfoAdapter adapter = new timeInfoAdapter(list);
                     timeRecListView.setAdapter(adapter);
                 }

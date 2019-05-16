@@ -27,6 +27,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -52,6 +53,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import io.reactivex.Observer;
@@ -60,6 +62,7 @@ import io.reactivex.disposables.Disposable;
 import static com.example.administrator.timeRecording.DBNodeOperator.insertNodeInfo;
 import static com.example.administrator.timeRecording.DBNodeOperator.queryNodeInfo;
 import static com.example.administrator.timeRecording.DBTimeOperator.insertTimeInfo;
+import static com.example.administrator.timeRecording.DBTimeOperator.queryTimeInfo;
 
 /**
  * 名称     ：MainActivity
@@ -483,8 +486,14 @@ public class MainActivity extends BaseActivity
         double latitude = 0.0;
         String position;
         String nodeID;*/
+        private List<Map<String,Object>> timeInfoList = new ArrayList<>(); //保存时间记录信息
+        ArrayAdapter<String> adapter;
+        final String[] timeInfo;
+
         public getNodeInfoAsynTask(String newsn) {
             sn = newsn;
+            timeInfo = new String[6];
+            adapter = null;
         }
 
         @Override
@@ -496,6 +505,28 @@ public class MainActivity extends BaseActivity
             node = queryNodeInfo(sn);
             if(node.getNodeSN().equals(sn))
                 isDone = true;
+
+            //登陆mysql，根据条件检索timeInfo并根据返回的ResultSet构造用于recycleView显示的字符串
+            timeInfoList = queryTimeInfo(email);
+            timeInfo[0] = "位置" + "                  "+"时间";
+            int numberOfRec = timeInfoList.size();
+            if (numberOfRec > 5)
+                numberOfRec = timeInfoList.size() - 5;
+            else
+                numberOfRec = 0;
+            int j=1;
+            String position = null;
+            for(int i=timeInfoList.size()-1;i>numberOfRec-1;i--) {
+                if(timeInfoList.get(i).get("recNodeSN").toString().equals("0117C5976A3E"))
+                    position = "图书馆";
+                else if(timeInfoList.get(i).get("recNodeSN").toString().equals("0117C597055B"))
+                    position = "工科教学楼";
+                else if (timeInfoList.get(i).get("recNodeSN").toString().equals("0117C5976771"))
+                    position = "宿舍楼";
+                timeInfo[j++] = timeInfoList.get(i).get("recTime").toString() + "     "+ position;
+            }
+            adapter = new ArrayAdapter<>(MainActivity.this,R.layout.listview_item,timeInfo);
+
             return isDone;
         }
 
@@ -521,6 +552,7 @@ public class MainActivity extends BaseActivity
                 SimpleDateFormat stime = new SimpleDateFormat("yyyy-MM-dd H:mm:ss");
                 final String recTime = stime.format(date);
                 tv_time.setText(recTime);
+                tv_pos_list.setAdapter(adapter);
             } else {
 //                Toast.makeText(MainActivity.this,"位置锚点信息检索失败！",Toast.LENGTH_SHORT).show();
                 Log.d("MainActivity","位置锚点信息检索失败！");

@@ -48,6 +48,7 @@ import com.tbruyelle.rxpermissions2.RxPermissions;
 
 import org.greenrobot.greendao.query.QueryBuilder;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -508,7 +509,9 @@ public class MainActivity extends BaseActivity
 
             //登陆mysql，根据条件检索timeInfo并根据返回的ResultSet构造用于recycleView显示的字符串
             timeInfoList = queryTimeInfo(email);
-            timeInfo[0] = "位置" + "                  "+"时间";
+
+            timeInfo[0] = " \n                     最近5条时间记录 \n" +
+                          "序号               时间                               位置";
             int numberOfRec = timeInfoList.size();
             if (numberOfRec > 5)
                 numberOfRec = timeInfoList.size() - 5;
@@ -516,6 +519,9 @@ public class MainActivity extends BaseActivity
                 numberOfRec = 0;
             int j=1;
             String position = null;
+            Date date=null;
+            SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String recTime;
             for(int i=timeInfoList.size()-1;i>numberOfRec-1;i--) {
                 if(timeInfoList.get(i).get("recNodeSN").toString().equals("0117C5976A3E"))
                     position = "图书馆";
@@ -523,7 +529,16 @@ public class MainActivity extends BaseActivity
                     position = "工科教学楼";
                 else if (timeInfoList.get(i).get("recNodeSN").toString().equals("0117C5976771"))
                     position = "宿舍楼";
-                timeInfo[j++] = timeInfoList.get(i).get("recTime").toString() + "     "+ position;
+           //     timeInfo[j++] = timeInfoList.get(i).get("recTime").toString() + "     "+ position;
+                //处理时间的最后一个0（微秒）
+                try {
+                    date = fmt.parse(timeInfoList.get(i).get("recTime").toString());
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                 recTime = fmt.format(date);
+
+                timeInfo[j++]=j-1 +":      "+ recTime + "            " + position;
             }
             adapter = new ArrayAdapter<>(MainActivity.this,R.layout.listview_item,timeInfo);
 

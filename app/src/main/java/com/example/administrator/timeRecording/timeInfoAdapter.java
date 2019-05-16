@@ -8,6 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -49,13 +52,21 @@ public class timeInfoAdapter extends RecyclerView.Adapter<timeInfoAdapter.ViewHo
     public void onBindViewHolder(ViewHolder holder, int position) {
         String recUser;
         String recTime;
+        Date date = null;
         String recSN;
         String recLogitude;
         String recLatitude;
         String timeInfo;
         String posName;
         recUser = mTimeRecList.get(position).get("recEmail").toString();
-        recTime = mTimeRecList.get(position).get("recTime").toString();
+        //时间格式化处理
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = fmt.parse(mTimeRecList.get(position).get("recTime").toString());
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        recTime = fmt.format(date);
         recSN = mTimeRecList.get(position).get("recNodeSN").toString();
 //        recLatitude = mTimeRecList.get(position).get("recLatitude").toString();
 //        recLogitude = mTimeRecList.get(position).get("recLogitude").toString();
@@ -71,7 +82,6 @@ public class timeInfoAdapter extends RecyclerView.Adapter<timeInfoAdapter.ViewHo
 
         timeInfo =position + ":    " + recTime + "    "+posName;
         holder.timeRecord.setText(timeInfo);
-
     }
 
     @Override

@@ -173,6 +173,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="最近五次时间记录："
+        android:visibility = "gone"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textView4" />
 
@@ -180,9 +181,8 @@
         android:id="@+id/positionList"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         app:layout_constraintBottom_toTopOf="@+id/btn_checkin"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.widget.Toast;
 
 import com.bumptech.glide.annotation.GlideModule;
 import com.bumptech.glide.module.AppGlideModule;
@@ -54,7 +55,8 @@ public class myApp extends Application {
     private Thread.UncaughtExceptionHandler handler = new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
-            restartAPP(); //程序异常时，重启APP
+            Toast.makeText(myApp.this, "程序运行异常，正在重启，请稍候！", Toast.LENGTH_SHORT).show();
+//            restartAPP(); //程序异常时，重启APP
         }
     };
 

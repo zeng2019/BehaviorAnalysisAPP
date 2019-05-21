@@ -13,7 +13,7 @@
 
     <item
         android:id="@+id/navigation_analysis"
-        android:icon="@drawable/time_search"
+        android:icon="@drawable/time_analysis"
         android:title="@string/title_notifications" />
 
     <item

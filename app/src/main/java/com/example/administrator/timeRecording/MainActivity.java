@@ -372,7 +372,9 @@ public class MainActivity extends BaseActivity
                 if (id == R.id.navigation_home) { //时间记录页面处理，默认选中，不需要处理
 
                 } else if (id == R.id.navigation_statistic) { //检索时间
-                    Toast.makeText(MainActivity.this,"选中了时间统计！",Toast.LENGTH_SHORT).show();
+                    Intent in = new Intent(MainActivity.this, timeSearch.class);
+                    in.putExtra("email",email);
+                    startActivity(in);
                 } else if (id == R.id.navigation_analysis) { //分析时间
 //                    Toast.makeText(MainActivity.this,"选中了时间分析！",Toast.LENGTH_SHORT).show();
                     Intent in = new Intent(MainActivity.this, MapShowActivity.class);
@@ -733,12 +735,8 @@ public class MainActivity extends BaseActivity
         }
     }
 
-    /**
-     * 待修改
-     * 右上的选项
-     * 目前还不知道用于什么用途
-     */
-    @Override
+
+/*    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
@@ -758,7 +756,7 @@ public class MainActivity extends BaseActivity
         }
 
         return super.onOptionsItemSelected(item);
-    }
+    }*/
 
     /**
      * 功能：处理时间记录界面的左上角导航栏的项目

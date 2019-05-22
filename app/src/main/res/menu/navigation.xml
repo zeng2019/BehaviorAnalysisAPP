@@ -6,10 +6,10 @@
         android:icon="@drawable/time_record"
         android:title="@string/title_home" />
 
-<!--    <item
+    <item
         android:id="@+id/navigation_statistic"
         android:icon="@drawable/time_search"
-        android:title="@string/title_dashboard" />-->
+        android:title="@string/title_dashboard" />
 
     <item
         android:id="@+id/navigation_analysis"

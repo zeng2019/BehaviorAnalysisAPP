@@ -16,7 +16,7 @@ public class DbOperator {
     public static Connection getConnection() {
 
         String driver_class="com.mysql.jdbc.Driver";
-        String ip="192.168.1.200";
+        String ip="183.170.56.217";
         int port=3306;
         String dbName = "INFO";
         String url="jdbc:mysql://"+ip+":"+port+"/"+dbName;

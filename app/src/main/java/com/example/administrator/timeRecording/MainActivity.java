@@ -371,14 +371,14 @@ public class MainActivity extends BaseActivity
 
                 if (id == R.id.navigation_home) { //时间记录页面处理，默认选中，不需要处理
 
-                } else if (id == R.id.navigation_statistic) { //时间统计页面
+                } else if (id == R.id.navigation_statistic) { //检索时间
                     Toast.makeText(MainActivity.this,"选中了时间统计！",Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.navigation_analysis) { //时间分析页面
+                } else if (id == R.id.navigation_analysis) { //分析时间
 //                    Toast.makeText(MainActivity.this,"选中了时间分析！",Toast.LENGTH_SHORT).show();
                     Intent in = new Intent(MainActivity.this, MapShowActivity.class);
                     in.putExtra("email",email);
                     startActivity(in);
-                } else { //关于我们页面
+                } else { //关于我们
                    // Toast.makeText(MainActivity.this,"选中了关于我们！",Toast.LENGTH_SHORT).show();
                     startActivity(new Intent(MainActivity.this, aboutus.class));
                 }

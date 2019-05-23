@@ -107,7 +107,7 @@ public class ShowinBDMap extends BaseActivity {
                 InfoWindow.OnInfoWindowClickListener listener = null;
 
                 //统计时间并展示在地图上
-                timeStatistic();
+                timeStatistic(timeList);
 
                 if(marker == mMarkerTsg) {
                     button.setText("图书馆: "+ timeText_library);
@@ -206,7 +206,7 @@ public class ShowinBDMap extends BaseActivity {
         });
     }
 
-    private  void timeStatistic() {
+    private  void timeStatistic(List<Map<String, Object>> timeList) {
         //设立每个区域的时间统计列表。统计每个区域的时间
         Log.d("时间记录信息：","分析！");
         List<Date> libraryTimeList = new ArrayList<>();
@@ -225,13 +225,13 @@ public class ShowinBDMap extends BaseActivity {
         long hour;
         //totalTimeLib 计算差多少分钟
         long min;
-        for(int i=0; i<timeList.size();i++) {
-            if (timeList.get(i).get("recNodeSN").toString().equals("0117C5976A3E")) //图书馆
-                libraryTimeList.add((Date)timeList.get(i).get("recTime"));
-            else if (timeList.get(i).get("recNodeSN").toString().equals("0117C597055B")) //工科教学楼
-                gongKeJiaoXueLouTimeList.add((Date)timeList.get(i).get("recTime"));
-            else if (timeList.get(i).get("recNodeSN").toString().equals("0117C5976771")) { //嘉园宿舍
-                jiaYuanTimeList.add((Date) timeList.get(i).get("recTime"));
+        for(int i = 0; i< this.timeList.size(); i++) {
+            if (this.timeList.get(i).get("recNodeSN").toString().equals("0117C5976A3E")) //图书馆
+                libraryTimeList.add((Date) this.timeList.get(i).get("recTime"));
+            else if (this.timeList.get(i).get("recNodeSN").toString().equals("0117C597055B")) //工科教学楼
+                gongKeJiaoXueLouTimeList.add((Date) this.timeList.get(i).get("recTime"));
+            else if (this.timeList.get(i).get("recNodeSN").toString().equals("0117C5976771")) { //嘉园宿舍
+                jiaYuanTimeList.add((Date) this.timeList.get(i).get("recTime"));
             }
             else
                 Log.d("时间记录分析：","失败，存在未知时间记录！");
@@ -289,9 +289,9 @@ public class ShowinBDMap extends BaseActivity {
         timeStatSyncTask = new timeStatisticalSyncTask(this.email);
         timeStatSyncTask.execute((Void) null);
 
-        for(int i=0; i<timeList.size();i++) {
+/*        for(int i=0; i<timeList.size();i++) {
             Log.d("时间记录信息：",timeList.get(i).get("recTime").toString());
-        }
+        }*/
 
     }
 

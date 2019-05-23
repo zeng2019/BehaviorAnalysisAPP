@@ -79,9 +79,13 @@
             android:label="@string/title_activity_map_show" />
         <activity
             android:name=".ShowinBDMap"
-            android:label="@string/title_activity_showin_bdmap"></activity>
-        <activity android:name=".timeSearch"
-            android:label="@string/title_activity_time_search"/>
+            android:label="@string/title_activity_showin_bdmap" />
+        <activity
+            android:name=".timeSearch"
+            android:label="@string/title_activity_time_search" />
+        <activity
+            android:name=".allTimeShow"
+            android:label="@string/title_activity_all_time_show"></activity>
     </application>
 
 </manifest>

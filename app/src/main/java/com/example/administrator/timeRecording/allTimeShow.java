@@ -47,7 +47,7 @@ public class allTimeShow extends Activity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.activity_all_time_show);
-        mLineChart = (LineChart)findViewById(R.id.allTimeLineChart);
+        mLineChart = findViewById(R.id.allTimeLineChart);
 
         XAxis xAxis = mLineChart.getXAxis();
 
@@ -59,7 +59,6 @@ public class allTimeShow extends Activity {
         }
 
         //模拟一组y轴数据(存放y轴数据的是一个Entry的ArrayList) 他是构建LineDataSet的参数之一
-
         ArrayList<Entry> yValue = new ArrayList<>();
         for (int i = 0; i < 7; i++) {
             yValue.add(new Entry(i, i));
@@ -68,37 +67,11 @@ public class allTimeShow extends Activity {
         //构建一个LineDataSet 代表一组Y轴数据 （比如不同的彩票： 七星彩  双色球）
         LineDataSet dataSet = new LineDataSet(yValue, "双色球");
 
-        //模拟第二组组y轴数据(存放y轴数据的是一个Entry的ArrayList) 他是构建LineDataSet的参数之一
+        dataSet.setColor(Color.BLACK);
 
-        ArrayList<Entry> yValue1 = new ArrayList<>();
-
-        yValue1.add(new Entry(7, 0));
-        yValue1.add(new Entry(17, 1));
-        yValue1.add(new Entry(3, 2));
-        yValue1.add(new Entry(5, 3));
-        yValue1.add(new Entry(4, 4));
-        yValue1.add(new Entry(3, 5));
-        yValue1.add(new Entry(7, 6));
-
-
-        Log.e("wing", yValue.size() + "");
-
-        //构建一个LineDataSet 代表一组Y轴数据 （比如不同的彩票： 七星彩  双色球）
-
-        LineDataSet dataSet1 = new LineDataSet(yValue1, "七星彩");
-        dataSet1.setColor(Color.BLACK);
-        //构建一个类型为LineDataSet的ArrayList 用来存放所有 y的LineDataSet   他是构建最终加入LineChart数据集所需要的参数
-        ArrayList<ILineDataSet> dataSets = new ArrayList<>();
-
-        //将数据加入dataSets
-        dataSets.add(dataSet);
-        dataSets.add(dataSet1);
-
-        //构建一个LineData  将dataSets放入
-        LineData lineData = new LineData(xValues, dataSets);
-
-        //将数据插入
+        LineData lineData = new LineData(dataSet);
         mLineChart.setData(lineData);
+        mLineChart.invalidate();
 
         //开启异步任务，准备数据
 

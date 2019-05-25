@@ -19,50 +19,64 @@
 
     <Button
         android:id="@+id/weekTime"
-        android:layout_width="98dp"
-        android:layout_height="46dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:text="周时间分析"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/allTime"
+        app:layout_constraintEnd_toStartOf="@+id/monthTime"
+        app:layout_constraintHorizontal_bias="0.271"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/monthTime"
-        android:layout_width="99dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="32dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:text="月时间分析"
+        app:layout_constraintBottom_toTopOf="@+id/allTime"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weekTime" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/yearTime"
-        android:layout_width="98dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
+        android:layout_marginStart="32dp"
+        android:layout_marginTop="8dp"
         android:text="年时间分析"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/nav_showInMap"
+        app:layout_constraintEnd_toStartOf="@+id/allTime"
+        app:layout_constraintHorizontal_bias="0.264"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weekTime" />
+        app:layout_constraintTop_toBottomOf="@+id/weekTime"
+        app:layout_constraintVertical_bias="1.0" />
 
     <Button
         android:id="@+id/allTime"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="32dp"
         android:text="所有时间分析"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/yearTime" />
+        app:layout_constraintBottom_toTopOf="@+id/nav_showInMap"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <com.github.mikephil.charting.charts.LineChart
+        android:id="@+id/timeLineChart"
+        android:layout_width="match_parent"
+        android:layout_height="350dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </android.support.constraint.ConstraintLayout>

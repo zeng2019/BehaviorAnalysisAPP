@@ -52,5 +52,5 @@ dependencies {
     implementation files('libs/mysql-connector-java-5.1.47.jar')
     implementation files('libs/BaiduLBS_Android.jar')
     api 'com.carson_ho:SearchLayout:1.0.1'
-    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0-alpha'
 }

@@ -116,4 +116,145 @@ public class DBTimeOperator {
         return list;
     }
 
+    public static List<Map<String, Object>> queryWeekTimeInfo(String condition) {
+        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        Connection conn = getConnection();
+        String sql = "select * from timeInfo where DATE_SUB(now(),INTERVAL 7 day) <= date(recTime)";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = (PreparedStatement) conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            Log.d("时间记录数据库操作：", "最近一周时间记录检索完毕！");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.d("时间记录数据库操作：", "最近一周时间记录检索出错！");
+        }
+
+
+        try {
+            ResultSetMetaData md = rs.getMetaData();
+            int columnCount = md.getColumnCount();
+            Log.d("时间分析操作：", "最近一周时间记录查询成功！");
+            while (rs.next()) //获得时间记录列表，构造字符串数组
+            {
+                Map<String,Object> rowData = new HashMap<String, Object>();
+                for(int i=1;i<=columnCount;i++) {
+                    rowData.put(md.getColumnName(i),rs.getObject(i));
+                }
+                list.add(rowData);
+
+            }
+        } catch (SQLException e) {
+            Log.d("时间分析操作:","最近一周时间记录查询出错！");
+            e.printStackTrace();
+        }
+
+
+        try {
+            if (conn != null)
+                conn.close();
+            if (pstmt != null)
+                pstmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static List<Map<String, Object>> queryMonthTimeInfo(String condition) {
+        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        Connection conn = getConnection();
+        String sql = "select * from timeInfo where DATE_SUB(now(),INTERVAL 30 day) <= date(recTime)";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = (PreparedStatement) conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            Log.d("时间记录数据库操作：", "最近一个月时间记录检索完毕！");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.d("时间记录数据库操作：", "最近一个月时间记录检索出错！");
+        }
+
+
+        try {
+            ResultSetMetaData md = rs.getMetaData();
+            int columnCount = md.getColumnCount();
+            Log.d("时间分析操作：", "最近一个月时间记录查询成功！");
+            while (rs.next()) //获得时间记录列表，构造字符串数组
+            {
+                Map<String,Object> rowData = new HashMap<String, Object>();
+                for(int i=1;i<=columnCount;i++) {
+                    rowData.put(md.getColumnName(i),rs.getObject(i));
+                }
+                list.add(rowData);
+
+            }
+        } catch (SQLException e) {
+            Log.d("时间分析操作:","最近一个月时间记录查询出错！");
+            e.printStackTrace();
+        }
+
+
+        try {
+            if (conn != null)
+                conn.close();
+            if (pstmt != null)
+                pstmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    public static List<Map<String, Object>> queryYearTimeInfo(String condition) {
+        List<Map<String,Object>> list = new ArrayList<Map<String,Object>>();
+        Connection conn = getConnection();
+        String sql = "select * from timeInfo where DATE_SUB(now(),INTERVAL 12 month) <= date(recTime)";
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        try {
+            pstmt = (PreparedStatement) conn.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+            Log.d("时间记录数据库操作：", "最近一周时间记录检索完毕！");
+        } catch (SQLException e) {
+            e.printStackTrace();
+            Log.d("时间记录数据库操作：", "最近一周时间记录检索出错！");
+        }
+
+
+        try {
+            ResultSetMetaData md = rs.getMetaData();
+            int columnCount = md.getColumnCount();
+            Log.d("时间分析操作：", "最近一周时间记录查询成功！");
+            while (rs.next()) //获得时间记录列表，构造字符串数组
+            {
+                Map<String,Object> rowData = new HashMap<String, Object>();
+                for(int i=1;i<=columnCount;i++) {
+                    rowData.put(md.getColumnName(i),rs.getObject(i));
+                }
+                list.add(rowData);
+
+            }
+        } catch (SQLException e) {
+            Log.d("时间分析操作:","最近一周时间记录查询出错！");
+            e.printStackTrace();
+        }
+
+
+        try {
+            if (conn != null)
+                conn.close();
+            if (pstmt != null)
+                pstmt.close();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }
